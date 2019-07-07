@@ -12,6 +12,85 @@ package main
 import "C"
 import "unsafe"
 
+// Aliases for JavaScript types
+
+// NapiEnv represents ...
+type NapiEnv C.napi_env
+
+// NapiValue represents ...
+type NapiValue C.napi_value
+
+// NapiRef represents ...
+type NapiRef C.napi_ref
+
+// NapiHandleScope represents ...
+type NapiHandleScope C.napi_handle_scope
+
+// NapiEscapableHandleScope represents ...
+type NapiEscapableHandleScope C.napi_escapable_handle_scope
+
+// NapiCallbackInfo represents ...
+type NapiCallbackInfo C.napi_callback_info
+
+// NapiDeferred represents ...
+type NapiDeferred C.napi_deferred
+
+// NapiPropertyAttributes represents ...
+type NapiPropertyAttributes C.napi_property_attributes
+
+// NapiValueType represents ...
+type NapiValueType C.napi_valuetype
+
+// NapiTypedArrayType represents ...
+type NapiTypedArrayType C.napi_typedarray_type
+
+// NapiStatus represents ...
+type NapiStatus C.napi_status
+
+// NapiCallback represents ...
+type NapiCallback C.napi_callback
+
+// NapiFinalize represents ...
+type NapiFinalize C.napi_finalize
+
+// NapiPropertyDescriptor represents ...
+type NapiPropertyDescriptor C.napi_property_descriptor
+
+// NapiExtendedErrorInfo represents ...
+type NapiExtendedErrorInfo C.napi_extended_error_info
+
+// Aliases for types strickly connected with the runtime
+
+// NapiCallbackScope represents ...
+type NapiCallbackScope C.napi_callback_scope
+
+// NapiAyncContext represents ...
+type NapiAyncContext C.napi_async_context
+
+// NapiAsyncWork represents ...
+type NapiAsyncWork C.napi_async_work
+
+// NapiThreadsafeFunction represents ...
+type NapiThreadsafeFunction C.napi_threadsafe_function
+
+// NapiTheradsafeFunctionReleaseMode represents ...
+type NapiTheradsafeFunctionReleaseMode C.napi_threadsafe_function_release_mode
+
+// NapiThreadsafeFunctionCallMode represents ...
+type NapiThreadsafeFunctionCallMode C.napi_threadsafe_function_call_mode
+
+// NapiAsyncExecuteCallback represents ...
+type NapiAsyncExecuteCallback C.napi_async_execute_callback
+
+// NapiAsyncCompleteCallback represents ...
+type NapiAsyncCompleteCallback C.napi_async_complete_callback
+
+// NapiThreadsafeFunctionCallJS represents ...
+type NapiThreadsafeFunctionCallJS C.napi_threadsafe_function_call_js
+
+// NapiNodeVersion represents ...
+type NapiNodeVersion C.napi_node_version
+
 // Caller contains a callback to call
 type Caller struct{}
 
