@@ -1,6 +1,6 @@
 # go-napi-sys
-Go low level bindings for writing safe and fast native Node.js modules.
 
+Go low level bindings for writing safe and fast native Node.js modules.
 
 If you want to know more about all the work behind this module please take a look at
 followings repo: 
