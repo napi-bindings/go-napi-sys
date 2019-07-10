@@ -92,399 +92,922 @@ type NapiThreadsafeFunctionCallJS C.napi_threadsafe_function_call_js
 type NapiNodeVersion C.napi_node_version
 
 // NapiGetLastErrorInfo function ...
-func NapiGetLastErrorInfo() {}
+func NapiGetLastErrorInfo(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
-// NapiThrow function ...
-func NapiThrow() {}
+// NapiThrow function throws the JavaScript value provided.
+// [in] env: The environment that the API is invoked under.
+// [in] error: The JavaScript value to be thrown.
+func NapiThrow(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_throw(env, value)
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiThrowError function ...
-func NapiThrowError() {}
+func NapiThrowError(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiThrowTypeError function ...
-func NapiThrowTypeError() {}
+func NapiThrowTypeError(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiThrowRangError function ...
-func NapiThrowRangError() {}
+func NapiThrowRangError(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiIsError function ...
-func NapiIsError() {}
+func NapiIsError(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateError function ...
-func NapiCreateError() {}
+func NapiCreateError(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateTypeError function ...
-func NapiCreateTypeError() {}
+func NapiCreateTypeError(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateRangeError function ...
-func NapiCreateRangeError() {}
+func NapiCreateRangeError(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetAndClearLastException function ...
-func NapiGetAndClearLastException() {}
+func NapiGetAndClearLastException(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiIsExceptionPending function ...
-func NapiIsExceptionPending() {}
+func NapiIsExceptionPending(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiFatalException function ...
-func NapiFatalException() {}
+func NapiFatalException(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiFatalError function ...
-func NapiFatalError() {}
+func NapiFatalError(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiOnpenHandleScope function ...
-func NapiOnpenHandleScope() {}
+func NapiOnpenHandleScope(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiClosesHandleScope function ...
-func NapiClosesHandleScope() {}
+func NapiClosesHandleScope(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiOnpenEscapableHandleScope function ...
-func NapiOnpenEscapableHandleScope() {}
+func NapiOnpenEscapableHandleScope(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiClosesEscapableHandleScope function ...
-func NapiClosesEscapableHandleScope() {}
+func NapiClosesEscapableHandleScope(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiEscapeHandle function ...
-func NapiEscapeHandle() {}
+func NapiEscapeHandle(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateReference function ...
-func NapiCreateReference() {}
+func NapiCreateReference(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiDeleteReference function ...
-func NapiDeleteReference() {}
+func NapiDeleteReference(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiReferenceRef function ...
-func NapiReferenceRef() {}
+func NapiReferenceRef(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiReferenceUnref function ...
-func NapiReferenceUnref() {}
+func NapiReferenceUnref(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetReferenceValue function ...
-func NapiGetReferenceValue() {}
+func NapiGetReferenceValue(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiAddEnvCleanupHook function ...
-func NapiAddEnvCleanupHook() {}
+func NapiAddEnvCleanupHook(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiRemoveCleaupHook function ...
-func NapiRemoveCleaupHook() {}
+func NapiRemoveCleaupHook(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateArray function ...
-func NapiCreateArray() {}
+func NapiCreateArray(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateArrayWithLength function ...
-func NapiCreateArrayWithLength() {}
+func NapiCreateArrayWithLength(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateArrayBuffer function ...
-func NapiCreateArrayBuffer() {}
+func NapiCreateArrayBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateBuffer function ...
-func NapiCreateBuffer() {}
+func NapiCreateBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateBufferCopy function ...
-func NapiCreateBufferCopy() {}
+func NapiCreateBufferCopy(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateExternal function ...
-func NapiCreateExternal() {}
+func NapiCreateExternal(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateExternalArrayBuffer function ...
-func NapiCreateExternalArrayBuffer() {}
+func NapiCreateExternalArrayBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateExternalBuffer function ...
-func NapiCreateExternalBuffer() {}
+func NapiCreateExternalBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateObject function ...
-func NapiCreateObject() {}
+func NapiCreateObject(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateSymbol function ...
-func NapiCreateSymbol() {}
+func NapiCreateSymbol(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateTypedArray function ...
-func NapiCreateTypedArray() {}
+func NapiCreateTypedArray(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateDataview function ...
-func NapiCreateDataview() {}
+func NapiCreateDataview(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateInt32 function ...
-func NapiCreateInt32() {}
+func NapiCreateInt32(env NapiEnv, value int32) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_create_int32(env, C.int(value), &res)
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateUInt32 function ...
-func NapiCreateUInt32() {}
+func NapiCreateUInt32(env NapiEnv, value uint32) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_create_uint32(env, C.uint(value), &res)
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateInt64 function ...
-func NapiCreateInt64() {}
+func NapiCreateInt64(env NapiEnv, value int64) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_create_int64(env, C.int64_t(value), &res)
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateDouble function ...
-func NapiCreateDouble() {}
+func NapiCreateDouble(env NapiEnv, value float64) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_create_double(env, C.double(value), &res)
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateBigintInt64 function ...
-func NapiCreateBigintInt64() {}
+func NapiCreateBigintInt64(env NapiEnv, value int64) (NapiValue, NapiStatus) {
+	/*var res C.napi_value
+	var status = C.napi_create_bigint_int64(env, C.int64_t(value), &res)
+	return NapiValue(res), NapiStatus(status)*/
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateBigintUInt64 function ...
-func NapiCreateBigintUInt64() {}
+func NapiCreateBigintUInt64(env NapiEnv, value uint64) (NapiValue, NapiStatus) {
+	/*var res C.napi_value
+	var status = C.napi_create_bigint_uint64(env, C.uint64_t(value), &res)
+	return NapiValue(res), NapiStatus(status)*/
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateBigintWords function ...
-func NapiCreateBigintWords() {}
+func NapiCreateBigintWords() (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateStringLatin1 function ...
-func NapiCreateStringLatin1() {}
+func NapiCreateStringLatin1(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateStringUtf16 function ...
-func NapiCreateStringUtf16() {}
+func NapiCreateStringUtf16(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateStringUtf8 function ...
-func NapiCreateStringUtf8() {}
+func NapiCreateStringUtf8(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetArrayLength function ...
-func NapiGetArrayLength() {}
+func NapiGetArrayLength(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetArrayBufferInfo function ...
-func NapiGetArrayBufferInfo() {}
+func NapiGetArrayBufferInfo(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetPrototype function ...
-func NapiGetPrototype() {}
+func NapiGetPrototype(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetTypedArrayInfo function ...
-func NapiGetTypedArrayInfo() {}
+func NapiGetTypedArrayInfo(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetDataviewInfo function ...
-func NapiGetDataviewInfo() {}
+func NapiGetDataviewInfo(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueBool function ...
-func NapiGetValueBool() {}
+func NapiGetValueBool(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueDouble function ...
-func NapiGetValueDouble() {}
+func NapiGetValueDouble(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueBigintInt64 function ...
-func NapiGetValueBigintInt64() {}
+func NapiGetValueBigintInt64(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueBigintUInt64 function ...
-func NapiGetValueBigintUInt64() {}
+func NapiGetValueBigintUInt64(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueBigintWords function ...
-func NapiGetValueBigintWords() {}
+func NapiGetValueBigintWords(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 //NapiGetValueExternal function ...
-func NapiGetValueExternal() {}
+func NapiGetValueExternal(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueInt32 function ...
-func NapiGetValueInt32() {}
+func NapiGetValueInt32(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueInt64 function ...
-func NapiGetValueInt64() {}
+func NapiGetValueInt64(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueStringLatin1 function ...
-func NapiGetValueStringLatin1() {}
+func NapiGetValueStringLatin1(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueStringUtf8 function ...
-func NapiGetValueStringUtf8() {}
+func NapiGetValueStringUtf8(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueStringUtf16 function ...
-func NapiGetValueStringUtf16() {}
+func NapiGetValueStringUtf16(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetValueUint32 function ...
-func NapiGetValueUint32() {}
+func NapiGetValueUint32(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetBoolean function ...
-func NapiGetBoolean() {}
+func NapiGetBoolean(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetGlobal function ...
-func NapiGetGlobal() {}
+func NapiGetGlobal(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetNull function ...
-func NapiGetNull() {}
+func NapiGetNull(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetUndefined function ...
-func NapiGetUndefined() {}
+func NapiGetUndefined(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCoerceToBool function ...
-func NapiCoerceToBool() {}
+func NapiCoerceToBool(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCoerceToNumber function ...
-func NapiCoerceToNumber() {}
+func NapiCoerceToNumber(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCoerceToObject function ...
-func NapiCoerceToObject() {}
+func NapiCoerceToObject(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCoerceToString function ...
-func NapiCoerceToString() {}
+func NapiCoerceToString(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiTypeOf function ...
-func NapiTypeOf() {}
+func NapiTypeOf(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiInstanceOf function ...
-func NapiInstanceOf() {}
+func NapiInstanceOf(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiIsArray function ...
-func NapiIsArray() {}
+func NapiIsArray(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiIsArrayBuffer function ...
-func NapiIsArrayBuffer() {}
+func NapiIsArrayBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiIsBuffer function ...
-func NapiIsBuffer() {}
+func NapiIsBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiIsTypedArray function ...
-func NapiIsTypedArray() {}
+func NapiIsTypedArray(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiIsDataview function ...
-func NapiIsDataview() {}
+func NapiIsDataview(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiStrictEquals function ...
-func NapiStrictEquals() {}
+func NapiStrictEquals(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetPropertyNames function ...
-func NapiGetPropertyNames() {}
+func NapiGetPropertyNames(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiSetProperty function ...
-func NapiSetProperty() {}
+func NapiSetProperty(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetProperty function ...
-func NapiGetProperty() {}
+func NapiGetProperty(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiHasProperty function ...
-func NapiHasProperty() {}
+func NapiHasProperty(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiDeleteProperty function ...
-func NapiDeleteProperty() {}
+func NapiDeleteProperty(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiHasOwnProperty function ...
-func NapiHasOwnProperty() {}
+func NapiHasOwnProperty(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiSetNamedProperty function ...
-func NapiSetNamedProperty() {}
+func NapiSetNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetNamedProperty function ...
-func NapiGetNamedProperty() {}
+func NapiGetNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiHasNamedProperty function ...
-func NapiHasNamedProperty() {}
+func NapiHasNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiSetElement function ...
-func NapiSetElement() {}
+func NapiSetElement(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetElement function ...
-func NapiGetElement() {}
+func NapiGetElement(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiHasElement function ...
-func NapiHasElement() {}
+func NapiHasElement(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiDeleteElement function ...
-func NapiDeleteElement() {}
+func NapiDeleteElement(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiDefineProperties function ...s
-func NapiDefineProperties() {}
+func NapiDefineProperties(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCallFunction function ...s
-func NapiCallFunction() {}
+func NapiCallFunction(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateFunction function ...
-func NapiCreateFunction() {}
+func NapiCreateFunction(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetCbInfo function ...
-func NapiGetCbInfo() {}
+func NapiGetCbInfo(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetNewTarget function ...
-func NapiGetNewTarget() {}
+func NapiGetNewTarget(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiNewInstance function ...
-func NapiNewInstance() {}
+func NapiNewInstance(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiDefineClass function ...
-func NapiDefineClass() {}
+func NapiDefineClass(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiWrap function ...
-func NapiWrap() {}
+func NapiWrap(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiUnwrap function ...
-func NapiUnwrap() {}
+func NapiUnwrap(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiRemoveWrap function ...
-func NapiRemoveWrap() {}
+func NapiRemoveWrap(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiAddFinalizer function ...
-func NapiAddFinalizer() {}
+func NapiAddFinalizer(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateAsyncWork function ...
-func NapiCreateAsyncWork() {}
+func NapiCreateAsyncWork(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiDeleteAsyncWork function ...
-func NapiDeleteAsyncWork() {}
+func NapiDeleteAsyncWork(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiQueueAsyncWork function ...
-func NapiQueueAsyncWork() {}
+func NapiQueueAsyncWork(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCancelAsyncWork function ...
-func NapiCancelAsyncWork() {}
+func NapiCancelAsyncWork(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiAsyncInit function ...
-func NapiAsyncInit() {}
+func NapiAsyncInit(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiAsyncDestroy function ...
-func NapiAsyncDestroy() {}
+func NapiAsyncDestroy(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiMakeCallback function ...
-func NapiMakeCallback() {}
+func NapiMakeCallback(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiOpenCallbackScope function ...
-func NapiOpenCallbackScope() {}
+func NapiOpenCallbackScope(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCloseCallbackScope function ...
-func NapiCloseCallbackScope() {}
+func NapiCloseCallbackScope(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetNodeVersion function ...
-func NapiGetNodeVersion() {}
+func NapiGetNodeVersion(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetVersion function ...
-func NapiGetVersion() {}
+func NapiGetVersion(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiAdjustExternalMemory unction ...f
-func NapiAdjustExternalMemory() {}
+func NapiAdjustExternalMemory(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreatePromise function ...
-func NapiCreatePromise() {}
+func NapiCreatePromise(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiResolveDeferred function ...
-func NapiResolveDeferred() {}
+func NapiResolveDeferred(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiRejectDeferred function ...
-func NapiRejectDeferred() {}
+func NapiRejectDeferred(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiIsPromise function ...
-func NapiIsPromise() {}
+func NapiIsPromise(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiRunScript function ...
-func NapiRunScript() {}
+func NapiRunScript(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetUvEventLoop function ...
-func NapiGetUvEventLoop() {}
+func NapiGetUvEventLoop(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCreateThreadsafeFunction function ...
-func NapiCreateThreadsafeFunction() {}
+func NapiCreateThreadsafeFunction(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiGetThreadsafeFunctionContext function ...
-func NapiGetThreadsafeFunctionContext() {}
+func NapiGetThreadsafeFunctionContext(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiCallThreadsafeFunction function ...
-func NapiCallThreadsafeFunction() {}
+func NapiCallThreadsafeFunction(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiAcquireThreadsafeFunction function ...
-func NapiAcquireThreadsafeFunction() {}
+func NapiAcquireThreadsafeFunction(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiReleaseThreadsafeFunction function ...
-func NapiReleaseThreadsafeFunction() {}
+func NapiReleaseThreadsafeFunction(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiRefThreadsafeFunction function ...
-func NapiRefThreadsafeFunction() {}
+func NapiRefThreadsafeFunction(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // NapiUnrefThreadsafeFunction function ...
-func NapiUnrefThreadsafeFunction() {}
+func NapiUnrefThreadsafeFunction(env NapiEnv) (NapiValue, NapiStatus) {
+	var res C.napi_value
+	var status = C.napi_ok
+	return NapiValue(res), NapiStatus(status)
+}
 
 // Caller contains a callback to call
 type Caller struct{}
 
 func (s *Caller) cb(env C.napi_env, info C.napi_callback_info) C.napi_value {
-	var res C.napi_value
-	C.napi_create_int32(env, C.int(5), &res)
-	return res
+	value, _ := NapiCreateInt32(NapiEnv(env), 7)
+	return C.napi_value(value)
 }
 
 //export ExecuteCallback
