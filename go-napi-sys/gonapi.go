@@ -87,8 +87,8 @@ type NapiTypedArrayType C.napi_typedarray_type
 //  napi_queue_full
 //  napi_closing
 //  napi_bigint_expected
-//  If additional information is required upon an API returning a failed status,
-//  it can be obtained by calling NapiGetLastErrorInfo.
+// If additional information is required upon an API returning a failed status,
+// it can be obtained by calling NapiGetLastErrorInfo.
 type NapiStatus C.napi_status
 
 // NapiCallback represents ...
