@@ -33,10 +33,23 @@ type NapiValue C.napi_value
 // NapiRef represents ...
 type NapiRef C.napi_ref
 
-// NapiHandleScope represents ...
+// NapiHandleScope is an abstraction used to control and modify the lifetime of
+// objects created within a particular scope. In general, N-API values are
+// created within the context of a handle scope. When a native method is called
+// from JavaScript, a default handle scope will exist. If the user does not
+// explicitly create a new handle scope, N-API values will be created in the
+// default handle scope. For any invocations of code outside the execution of a
+// native method (for instance, during a libuv callback invocation), the module
+// is required to create a scope before invoking any functions that can result
+// in the creation of JavaScript values.
+// Handle scopes are created using NapiOnpenHandleScope and are destroyed using
+// NapiCloseHandleScope. Closing the scope can indicate to the GC that all
+// NapiValues created during the lifetime of the handle scope are no longer
+// referenced from the current stack frame.
 type NapiHandleScope C.napi_handle_scope
 
-// NapiEscapableHandleScope represents ...
+// NapiEscapableHandleScope represents a special type of handle scope to return
+// values created within a particular handle scope to a parent scope.
 type NapiEscapableHandleScope C.napi_escapable_handle_scope
 
 // NapiCallbackInfo represents ...
@@ -87,8 +100,9 @@ type NapiFinalize C.napi_finalize
 // NapiPropertyDescriptor represents ...
 type NapiPropertyDescriptor C.napi_property_descriptor
 
-// NapiExtendedErrorInfo represents ...
-// The napi_status return value provides a VM-independent representation of the
+// NapiExtendedErrorInfo contains additional information about a failed status
+// happened on an N-API call.
+// The NapiStatus return value provides a VM-independent representation of the
 // error which occurred. In some cases it is useful to be able to get more
 // detailed information, including a string representing the error as well as
 // VM (engine)-specific information.
