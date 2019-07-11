@@ -57,7 +57,21 @@ type NapiFinalize C.napi_finalize
 type NapiPropertyDescriptor C.napi_property_descriptor
 
 // NapiExtendedErrorInfo represents ...
-type NapiExtendedErrorInfo C.napi_extended_error_info
+// The napi_status return value provides a VM-independent representation of the
+// error which occurred. In some cases it is useful to be able to get more
+// detailed information, including a string representing the error as well as
+// VM (engine)-specific information.
+// error_message: UTF8-encoded string containing a VM-neutral description of the
+//error.
+// engine_reserved: Reserved for VM-specific error details. This is currently
+// not implemented for any VM.
+// engine_error_code: VM-specific error code. This is currently not implemented
+// for any VM.
+// error_code: The N-API status code that originated with the last error.
+// Do not rely on the content or format of any of the extended information as it
+// is not subject to SemVer and may change at any time. It is intended only for
+// logging purposes.
+type NapiExtendedErrorInfo *C.napi_extended_error_info
 
 // Aliases for types strickly connected with the runtime
 
@@ -92,96 +106,172 @@ type NapiThreadsafeFunctionCallJS C.napi_threadsafe_function_call_js
 type NapiNodeVersion C.napi_node_version
 
 // NapiGetLastErrorInfo function ...
-func NapiGetLastErrorInfo(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// [in] env: The environment that the API is invoked under.
+// This API retrieves a napi_extended_error_info structure with information about
+// the last error that occurred.
+// The content of the napi_extended_error_info returned is only valid up until an
+// n-api function is called on the same env.
+// Do not rely on the content or format of any of the extended information as it
+// is not subject to SemVer and may change at any time. It is intended only for
+// logging purposes.
+// The function can be called even if there is a pending JavaScript exception.
+func NapiGetLastErrorInfo(env NapiEnv) (NapiExtendedErrorInfo, NapiStatus) {
+	var res *C.napi_extended_error_info
+	var status = C.napi_get_last_error_info(env, &res)
+	return NapiExtendedErrorInfo(res), NapiStatus(status)
 }
 
 // NapiThrow function throws the JavaScript value provided.
 // [in] env: The environment that the API is invoked under.
 // [in] error: The JavaScript value to be thrown.
-func NapiThrow(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
+// N-API version: 1
+func NapiThrow(env NapiEnv, error NapiValue) NapiStatus {
+	return NapiStatus(C.napi_throw(env, error))
+}
+
+// NapiThrowError function throws a JavaScript Error with the text provided.
+// [in] env: The environment that the API is invoked under.
+// [in] code: Optional error code to be set on the error.
+// [in] msg: C string representing the text to be associated with the error.
+// N-API version: 1
+func NapiThrowError(env NapiEnv, msg string, code string) NapiStatus {
+	cmsg := C.CString(msg)
+	defer C.free(unsafe.Pointer(cmsg))
+	var ccode = C.CString(code)
+	defer C.free(unsafe.Pointer(ccode))
+	return NapiStatus(C.napi_throw_error(env, ccode, cmsg))
+}
+
+// NapiThrowTypeError function  throws a JavaScript TypeError with the text
+// provided.
+// [in] env: The environment that the API is invoked under.
+// [in] code: Optional error code to be set on the error.
+// [in] msg: C string representing the text to be associated with the error.
+// N-API version: 1
+func NapiThrowTypeError(env NapiEnv, msg string, code string) NapiStatus {
+	cmsg := C.CString(msg)
+	defer C.free(unsafe.Pointer(cmsg))
+	var ccode = C.CString(code)
+	defer C.free(unsafe.Pointer(ccode))
+	return NapiStatus(C.napi_throw_type_error(env, ccode, cmsg))
+}
+
+// NapiThrowRangError function throws a JavaScript RangeError with the text
+// provided.
+// [in] env: The environment that the API is invoked under.
+// [in] code: Optional error code to be set on the error.
+// [in] msg: C string representing the text to be associated with the error.
+// N-API version: 1
+func NapiThrowRangError(env NapiEnv, msg string, code string) NapiStatus {
+	cmsg := C.CString(msg)
+	defer C.free(unsafe.Pointer(cmsg))
+	var ccode = C.CString(code)
+	defer C.free(unsafe.Pointer(ccode))
+	return NapiStatus(C.napi_throw_range_error(env, ccode, cmsg))
+}
+
+// NapiIsError function queries a napi_value to check if it represents an error
+// object.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The napi_value to be checked.
+// Boolean value that is set to true if napi_value represents an error, false
+// otherwise.
+// N-API version: 1
+func NapiIsError(env NapiEnv, value NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_is_error(env, value, &res)
+	return bool(res), NapiStatus(status)
+}
+
+// NapiCreateError function creates a JavaScript Error with the text provided.
+// [in] env: The environment that the API is invoked under.
+// [in] code: Optional napi_value with the string for the error code to be
+// associated with the error.
+// [in] msg: napi_value that references a JavaScript String to be used as the
+// message for the Error.
+// N-API version: 1
+func NapiCreateError(env NapiEnv, msg NapiValue, code NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_throw(env, value)
+	var status = C.napi_create_error(env, code, msg, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiThrowError function ...
-func NapiThrowError(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateTypeError function creates a JavaScript TypeError with the text
+// provided.
+// [in] env: The environment that the API is invoked under.
+// [in] code: Optional napi_value with the string for the error code to be
+// associated with the error.
+// [in] msg: napi_value that references a JavaScript String to be used as the
+// message for the Error.
+// N-API version: 1
+func NapiCreateTypeError(env NapiEnv, code NapiValue, msg NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_type_error(env, code, msg, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiThrowTypeError function ...
-func NapiThrowTypeError(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateRangeError function creates a JavaScript RangeError with the text
+// provided.
+// [in] env: The environment that the API is invoked under.
+// [in] code: Optional napi_value with the string for the error code to be
+// associated with the error.
+// [in] msg: napi_value that references a JavaScript String to be used as the
+// message for the Error.
+// N-API version: 1
+func NapiCreateRangeError(env NapiEnv, code NapiValue, msg NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_range_error(env, code, msg, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiThrowRangError function ...
-func NapiThrowRangError(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
-}
-
-// NapiIsError function ...
-func NapiIsError(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
-}
-
-// NapiCreateError function ...
-func NapiCreateError(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
-}
-
-// NapiCreateTypeError function ...
-func NapiCreateTypeError(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
-}
-
-// NapiCreateRangeError function ...
-func NapiCreateRangeError(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
-}
-
-// NapiGetAndClearLastException function ...
+// NapiGetAndClearLastException function returns true if an exception is pending.
+// This function can be called even if there is a pending JavaScript exception.
+// [in] env: The environment that the API is invoked under.
+// The function returns the exception if one is pending, NULL otherwise.
+// N-API version: 1
 func NapiGetAndClearLastException(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_and_clear_last_exception(env, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
 // NapiIsExceptionPending function ...
-func NapiIsExceptionPending(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// [in] env: The environment that the API is invoked under.
+// Boolean value that is set to true if an exception is pending.
+// N-API version: 1
+func NapiIsExceptionPending(env NapiEnv) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_is_exception_pending(env, &res)
+	return bool(res), NapiStatus(status)
 }
 
-// NapiFatalException function ...
-func NapiFatalException(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiFatalException function triggers an 'uncaughtException' in JavaScript.
+// Useful if an async callback throws an exception with no way to recover.
+// [in] env: The environment that the API is invoked under.
+// [in] err: The error that is passed to 'uncaughtException'.
+// N-API version: 3
+func NapiFatalException(env NapiEnv, error NapiValue) NapiStatus {
+	return NapiStatus(C.napi_fatal_exception(env, error))
 }
 
-// NapiFatalError function ...
-func NapiFatalError(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiFatalError function thrown a fatal error o immediately terminate the
+// process.
+// [in] location: Optional location at which the error occurred.
+// [in] location_len: The length of the location in bytes, or NAPI_AUTO_LENGTH
+// if it is null-terminated.
+// [in] message: The message associated with the error.
+// [in] message_len: The length of the message in bytes, or NAPI_AUTO_LENGTH if
+// it is null-terminated.
+// This function can be called even if there is a pending JavaScript exception.
+// The function call does not return, the process will be terminated.
+// N-API version: 1
+func NapiFatalError(location string, msg string) {
+	clocation := C.CString(location)
+	defer C.free(unsafe.Pointer(clocation))
+	cmsg := C.CString(msg)
+	defer C.free(unsafe.Pointer(cmsg))
+	C.napi_fatal_error(clocation, C.NAPI_AUTO_LENGTH, cmsg, C.NAPI_AUTO_LENGTH)
+	return
 }
 
 // NapiOnpenHandleScope function ...
