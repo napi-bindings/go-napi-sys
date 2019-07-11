@@ -62,7 +62,7 @@ type NapiPropertyDescriptor C.napi_property_descriptor
 // detailed information, including a string representing the error as well as
 // VM (engine)-specific information.
 // error_message: UTF8-encoded string containing a VM-neutral description of the
-//error.
+// error.
 // engine_reserved: Reserved for VM-specific error details. This is currently
 // not implemented for any VM.
 // engine_error_code: VM-specific error code. This is currently not implemented
