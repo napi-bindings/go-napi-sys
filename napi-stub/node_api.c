@@ -893,12 +893,16 @@ napi_add_finalizer(
 // Stub for runtime API
 // ##############################################################################
 
+void exit()  __attribute__((noreturn));;
+    
 NAPI_EXTERN NAPI_NO_RETURN 
 void napi_fatal_error(
     const char* location,
     size_t location_len,
     const char* message,
-    size_t message_len);
+    size_t message_len) {
+        exit(0);
+    }
 
 // Methods for custom handling of async operations
 NAPI_EXTERN napi_status 
@@ -1019,7 +1023,9 @@ napi_get_uv_event_loop(
 #if NAPI_VERSION >= 3
 
 NAPI_EXTERN napi_status 
-napi_fatal_exception(napi_env env, napi_value err);
+napi_fatal_exception(napi_env env, napi_value err) {
+    return napi_ok;
+}
 
 NAPI_EXTERN napi_status 
 napi_add_env_cleanup_hook(
