@@ -13,11 +13,21 @@ import "C"
 import "unsafe"
 
 // Aliases for JavaScript types
+// Basic N-API Data Types
+// N-API exposes the following fundamental datatypes as abstractions that are
+// consumed by the various APIs. These APIs should be treated as opaque,
+// introspectable only with other N-API calls.
 
-// NapiEnv represents ...
+// NapiEnv is used to represent a context that the underlying N-API
+// implementation can use to persist VM-specific state. This structure is passed
+// to native functions when they're invoked, and it must be passed back when
+// making N-API calls. Specifically, the same napi_env that was passed in when
+// the initial native function was called must be passed to any subsequent nested
+// N-API calls. Caching the napi_env for the purpose of general reuse is not
+// allowed.
 type NapiEnv C.napi_env
 
-// NapiValue represents ...
+// NapiValue is an opaque pointer that is used to represent a JavaScript value.
 type NapiValue C.napi_value
 
 // NapiRef represents ...
@@ -44,7 +54,28 @@ type NapiValueType C.napi_valuetype
 // NapiTypedArrayType represents ...
 type NapiTypedArrayType C.napi_typedarray_type
 
-// NapiStatus represents ...
+// NapiStatus represent the status code indicating the success or failure of
+// a N-API call. Currently, the following status codes are supported.
+//  napi_ok
+//  napi_invalid_arg
+//  napi_object_expected
+//  napi_string_expected
+//  nap//i_name_expected
+//  napi_function_expected
+//  napi_number_expected
+//  napi_boolean_expected
+//  napi_array_expected
+//  napi_generic_failure
+//  napi_pending_exception
+//  napi_cancelled
+//  napi_escape_called_twice
+//  napi_handle_scope_mismatch
+//  napi_callback_scope_mismatch
+//  napi_queue_full
+//  napi_closing
+//  napi_bigint_expected
+//  If additional information is required upon an API returning a failed status,
+//  it can be obtained by calling NapiGetLastErrorInfo.
 type NapiStatus C.napi_status
 
 // NapiCallback represents ...
@@ -164,7 +195,8 @@ type NapiNodeVersion C.napi_node_version
 // parameter which is the string for the code to be added to the error object. If
 // the optional parameter is NULL then no code will be associated with the error.
 
-// NapiGetLastErrorInfo function ...
+// NapiGetLastErrorInfo function returns the information for the last N-API call
+// that was made.
 // [in] env: The environment that the API is invoked under.
 // This API retrieves a napi_extended_error_info structure with information about
 // the last error that occurred.
