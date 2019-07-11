@@ -333,38 +333,56 @@ func NapiFatalError(location string, msg string) {
 	return
 }
 
-// NapiOnpenHandleScope function ...
-func NapiOnpenHandleScope(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiOnpenHandleScope function opens a new scope.
+// [in] env: The environment that the API is invoked under.
+// N-API version: 1
+func NapiOnpenHandleScope(env NapiEnv) (NapiHandleScope, NapiStatus) {
+	var res C.napi_handle_scope
+	var status = C.napi_open_handle_scope(env, &res)
+	return NapiHandleScope(res), NapiStatus(status)
 }
 
-// NapiClosesHandleScope function ...
-func NapiClosesHandleScope(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiCloseHandleScope function closes the scope passed in. Scopes must be
+// closed in the reverse order from which they were created.
+// [in] env: The environment that the API is invoked under.
+// [in] scope: napi_value representing the scope to be closed.
+// This function can be called even if there is a pending JavaScript exception.
+// N-API version: 1
+func NapiCloseHandleScope(env NapiEnv, scope NapiHandleScope) NapiStatus {
+	return NapiStatus(C.napi_close_handle_scope(env, scope))
 }
 
-// NapiOnpenEscapableHandleScope function ...
-func NapiOnpenEscapableHandleScope(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiOnpenEscapableHandleScope function opens a new scope from which one object
+// can be promoted to the outer scope.
+// [in] env: The environment that the API is invoked under.
+// N-API version: 1
+func NapiOnpenEscapableHandleScope(env NapiEnv) (NapiEscapableHandleScope, NapiStatus) {
+	var res C.napi_escapable_handle_scope
+	var status = C.napi_open_escapable_handle_scope(env, &res)
+	return NapiEscapableHandleScope(res), NapiStatus(status)
 }
 
-// NapiClosesEscapableHandleScope function ...
-func NapiClosesEscapableHandleScope(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiCloseEscapableHandleScope function closes the scope passed in. Scopes must
+// be closed in the reverse order from which they were created.
+// [in] env: The environment that the API is invoked under.
+// [in] scope: napi_value representing the scope to be closed.
+// This function can be called even if there is a pending JavaScript exception.
+// N-API version: 1
+func NapiCloseEscapableHandleScope(env NapiEnv, scope NapiEscapableHandleScope) NapiStatus {
+	return NapiStatus(C.napi_close_escapable_handle_scope(env, scope))
 }
 
-// NapiEscapeHandle function ...
-func NapiEscapeHandle(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiEscapeHandle function promotes the handle to the JavaScript object so that
+// it is valid for the lifetime of the outer scope. It can only be called once
+// per scope. If it is called more than once an error will be returned.
+// [in] env: The environment that the API is invoked under.
+// [in] scope: napi_value representing the current scope.
+// [in] escapee: napi_value representing the JavaScript Object to be escaped.
+// This function can be called even if there is a pending JavaScript exception.
+// N-API version: 1
+func NapiEscapeHandle(env NapiEnv, scope NapiEscapableHandleScope, escapee NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_escape_handle(env, scope, escapee, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
