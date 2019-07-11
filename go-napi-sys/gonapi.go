@@ -333,6 +333,28 @@ func NapiFatalError(location string, msg string) {
 	return
 }
 
+// Object Lifetime management
+// As N-API calls are made, handles to objects in the heap for the underlying VM
+// may be returned as napi_values. These handles must hold the objects 'live'
+// until they are no longer required by the native code, otherwise the objects
+// could be collected before the native code was finished using them. As object
+// handles are returned they are associated with a 'scope'. The lifespan for the
+// default scope is tied to the lifespan of the native method call. The result is
+// that, by default, handles remain valid and the objects associated with these
+// handles will be held live for the lifespan of the native method call. In many
+// cases, however, it is necessary that the handles remain valid for either a
+// shorter or longer lifespan than that of the native method.
+// N-API only supports a single nested hierarchy of scopes. There is only one
+// active scope at any time, and all new handles will be associated with that
+// scope while it is active. Scopes must be closed in the reverse order from
+// which they are opened. In addition, all scopes created within a native method
+// must be closed before returning from that method.
+// When nesting scopes, there are cases where a handle from an inner scope needs
+// to live beyond the lifespan of that scope. N-API supports an 'escapable scope'
+// in order to support this case. An escapable scope allows one handle to be
+// 'promoted' so that it 'escapes' the current scope and the lifespan of the
+// handle changes from the current scope to that of the outer scope.
+
 // NapiOnpenHandleScope function opens a new scope.
 // [in] env: The environment that the API is invoked under.
 // N-API version: 1
