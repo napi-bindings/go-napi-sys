@@ -60,7 +60,7 @@ type NapiTypedArrayType C.napi_typedarray_type
 //  napi_invalid_arg
 //  napi_object_expected
 //  napi_string_expected
-//  nap//i_name_expected
+//  napi_name_expected
 //  napi_function_expected
 //  napi_number_expected
 //  napi_boolean_expected
