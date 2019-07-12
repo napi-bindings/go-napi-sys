@@ -748,6 +748,13 @@ napi_get_version(
         return napi_ok;
 }
 
+NAPI_EXTERN napi_status 
+napi_get_node_version(
+    napi_env env, 
+    const napi_node_version** version) {
+        return napi_ok;
+}
+
 // Promises
 NAPI_EXTERN napi_status 
 napi_create_promise(
