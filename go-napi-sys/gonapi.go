@@ -30,7 +30,9 @@ type NapiEnv C.napi_env
 // NapiValue is an opaque pointer that is used to represent a JavaScript value.
 type NapiValue C.napi_value
 
-// NapiRef represents ...
+// NapiRef is an abstraction to use to reference a NapiValue. This allows for
+// users to manage the lifetimes of JavaScript values, including defining their
+// minimum lifetimes explicitly.
 type NapiRef C.napi_ref
 
 // NapiHandleScope is an abstraction used to control and modify the lifetime of
@@ -68,7 +70,7 @@ type NapiValueType C.napi_valuetype
 type NapiTypedArrayType C.napi_typedarray_type
 
 // NapiStatus represent the status code indicating the success or failure of
-// a N-API call. Currently, the following status codes are supported.
+// a N-API call. Currently, the following status codes are supported:
 //  napi_ok
 //  napi_invalid_arg
 //  napi_object_expected
@@ -147,8 +149,14 @@ type NapiAsyncCompleteCallback C.napi_async_complete_callback
 // NapiThreadsafeFunctionCallJS represents ...
 type NapiThreadsafeFunctionCallJS C.napi_threadsafe_function_call_js
 
-// NapiNodeVersion represents ...
-type NapiNodeVersion C.napi_node_version
+// NapiNodeVersion is a structure that contains informations about the version
+// of Node.js instance.
+// Currently, the following fields are exposed:
+//  major
+//  minor
+//  patch
+//  release
+type NapiNodeVersion *C.napi_node_version
 
 // Error Handling
 // N-API uses both return values and JavaScript exceptions for error handling.
@@ -1125,25 +1133,46 @@ func NapiCloseCallbackScope(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetNodeVersion function ...
-func NapiGetNodeVersion(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetNodeVersion function fills the version struct with the major, minor,
+// and patch version of Node.js that is currently running, and the release field
+// with the value of process.release.name.
+// [in] env: The environment that the API is invoked under.
+// The returned buffer is statically allocated and does not need to be freed.
+// N-API version: 1
+func NapiGetNodeVersion(env NapiEnv) (NapiNodeVersion, NapiStatus) {
+	var res *C.napi_node_version
+	var status = C.napi_get_node_version(env, &res)
+	return NapiNodeVersion(res), NapiStatus(status)
 }
 
-// NapiGetVersion function ...
-func NapiGetVersion(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetVersion function returns the highest version of N-API supported.
+// [in] env: The environment that the API is invoked under.
+// This function returns the highest N-API version supported by the Node.js
+// runtime. N-API is planned to be additive such that newer releases of Node.js
+// may support additional API functions. In order to allow an addon to use a
+// newer function when running with versions of Node.js that support it, while
+// providing fallback behavior when running with Node.js versions that don't
+// support it.
+// N-API version: 1
+func NapiGetVersion(env NapiEnv) (uint32, NapiStatus) {
+	var res C.uint32_t
+	var status = C.napi_get_version(env, &res)
+	return uint32(res), NapiStatus(status)
 }
 
-// NapiAdjustExternalMemory unction ...f
-func NapiAdjustExternalMemory(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiAdjustExternalMemory function gives V8 an indication of the amount of
+// externally allocated memory that is kept alive by JavaScript objects
+// (i.e. a JavaScript object that points to its own memory allocated by a native
+// module). Registering externally allocated memory will trigger global garbage
+// collections more often than it would otherwise.
+// [in] env: The environment that the API is invoked under.
+// [in] change_in_bytes: The change in externally allocated memory that is kept
+// alive by JavaScript objects.
+// N-API version: 1
+func NapiAdjustExternalMemory(env NapiEnv, changeInBytes int64) (int64, NapiStatus) {
+	var res C.int64_t
+	var status = C.napi_adjust_external_memory(env, C.int64_t(changeInBytes), &res)
+	return int64(res), NapiStatus(status)
 }
 
 // NapiCreatePromise function ...
