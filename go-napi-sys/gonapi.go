@@ -3,7 +3,7 @@ package main
 /*
 #cgo CXXFLAGS: -std=c++11
 #cgo CXXFLAGS:  -I./include/
-#cgo CFLAGS: -I./include/
+#cgo CFLAGS: -I./include/ -DNAPI_EXPERIMENTAL=1
 #cgo LDFLAGS: -L./lib/ -lnode_api
 #include <stdlib.h>
 #include "gonapi.h"
@@ -595,51 +595,73 @@ func NapiCreateDataview(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateInt32 function ...
+// NapiCreateInt32 function creates JavaScript Number from the C int32_t type.
+// [in] env: The environment that the API is invoked under.
+// [in] value: Integer value to be represented in JavaScript.
+// The JavaScript Number type is described in Section 6.1.6 of the ECMAScript
+// Language Specification.
+// N-API version: 1
 func NapiCreateInt32(env NapiEnv, value int32) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_create_int32(env, C.int(value), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateUInt32 function ...
+// NapiCreateUInt32 function creates JavaScript Number from the C uint32_t type.
+// [in] env: The environment that the API is invoked under.
+// [in] value: Integer value to be represented in JavaScript.
+// The JavaScript Number type is described in Section 6.1.6 of the ECMAScript
+// Language Specification.
+// N-API version: 1
 func NapiCreateUInt32(env NapiEnv, value uint32) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_create_uint32(env, C.uint(value), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateInt64 function ...
+// NapiCreateInt64 function creates JavaScript Number from the C int64_t type.
+// [in] env: The environment that the API is invoked under.
+// [in] value: Integer value to be represented in JavaScript.
+// The JavaScript Number type is described in Section 6.1.6 of the ECMAScript
+// Language Specification.
+// N-API version: 1
 func NapiCreateInt64(env NapiEnv, value int64) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_create_int64(env, C.int64_t(value), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateDouble function ...
+// NapiCreateDouble function creates JavaScript Number from the C double type.
+// [in] env: The environment that the API is invoked under.
+// [in] value: Integer value to be represented in JavaScript.
+// The JavaScript Number type is described in Section 6.1.6 of the ECMAScript
+// Language Specification.
+// N-API version: 1
 func NapiCreateDouble(env NapiEnv, value float64) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_create_double(env, C.double(value), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateBigintInt64 function ...
+// NapiCreateBigintInt64 function creates JavaScript BigInt from the C int64_t
+// type.
+// [in] env: The environment that the API is invoked under.
+// [in] value: Integer value to be represented in JavaScript.
+// N-API version: -
 func NapiCreateBigintInt64(env NapiEnv, value int64) (NapiValue, NapiStatus) {
-	/*var res C.napi_value
-	var status = C.napi_create_bigint_int64(env, C.int64_t(value), &res)
-	return NapiValue(res), NapiStatus(status)*/
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_bigint_int64(env, C.int64_t(value), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateBigintUInt64 function ...
+// NapiCreateBigintUInt64 function creates JavaScript BigInt from the C uint64_t
+// type.
+// [in] env: The environment that the API is invoked under.
+// [in] value: Integer value to be represented in JavaScript.
+// N-API version: -
 func NapiCreateBigintUInt64(env NapiEnv, value uint64) (NapiValue, NapiStatus) {
-	/*var res C.napi_value
-	var status = C.napi_create_bigint_uint64(env, C.uint64_t(value), &res)
-	return NapiValue(res), NapiStatus(status)*/
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_bigint_uint64(env, C.uint64_t(value), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
@@ -650,24 +672,48 @@ func NapiCreateBigintWords() (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateStringLatin1 function ...
-func NapiCreateStringLatin1(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateStringLatin1 function creates a JavaScript String object from an
+// ISO-8859-1-encoded C string. The native string is copied.
+// [in] env: The environment that the API is invoked under.
+// [in] str: Character buffer representing an ISO-8859-1-encoded string.
+// The JavaScript String type is described in Section 6.1.4 of the ECMAScript
+// Language Specification.
+// N-API version: 1
+func NapiCreateStringLatin1(env NapiEnv, str string) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	cstr := C.CString(str)
+	defer C.free(unsafe.Pointer(cstr))
+	var status = C.napi_create_string_latin1(env, cstr, C.NAPI_AUTO_LENGTH, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateStringUtf16 function ...
-func NapiCreateStringUtf16(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateStringUtf16 function creates a JavaScript String object from a
+// UTF16-LE-encoded C string. The native string is copied.
+// [in] env: The environment that the API is invoked under.
+// [in] str: Character buffer representing a UTF16-LE-encoded string.
+// The JavaScript String type is described in Section 6.1.4 of the ECMAScript
+// Language Specification.
+// N-API version: 1
+/*func NapiCreateStringUtf16(env NapiEnv, str string) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	cstr := C.CString(str)
+	defer C.free(unsafe.Pointer(cstr))
+	var status = C.napi_create_string_utf16(env, cstr, C.NAPI_AUTO_LENGTH, &res)
 	return NapiValue(res), NapiStatus(status)
-}
+}*/
 
-// NapiCreateStringUtf8 function ...
-func NapiCreateStringUtf8(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateStringUtf8 function creates a JavaScript String object from a
+// UTF8-encoded C string. The native string is copied.
+// [in] env: The environment that the API is invoked under.
+// [in] str: Character buffer representing a UTF8-encoded string.
+// The JavaScript String type is described in Section 6.1.4 of the ECMAScript
+// Language Specification.
+// N-API version: 1
+func NapiCreateStringUtf8(env NapiEnv, str string) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	cstr := C.CString(str)
+	defer C.free(unsafe.Pointer(cstr))
+	var status = C.napi_create_string_utf8(env, cstr, C.NAPI_AUTO_LENGTH, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
@@ -706,32 +752,60 @@ func NapiGetDataviewInfo(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetValueBool function ...
-func NapiGetValueBool(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueBool function returns the C boolean primitive equivalent of the
+// given JavaScript Boolean.
+// [in] env: The environment that the API is invoked under.
+// [in] value: NapiValue representing JavaScript Boolean.
+// Returns napi_ok if the API succeeded. If a non-boolean NapiValue is passed
+// in it returns napi_boolean_expected.
+// N-API version: 1
+func NapiGetValueBool(env NapiEnv, value NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_get_value_bool(env, value, &res)
+	return bool(res), NapiStatus(status)
 }
 
-// NapiGetValueDouble function ...
-func NapiGetValueDouble(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueDouble function returns the C double primitive equivalent of the
+// given JavaScript Number.
+// [in] env: The environment that the API is invoked under.
+// [in] value: NapiValue representing JavaScript Number.
+// Returns napi_ok if the API succeeded. If a non-number NapiValue is passed in
+// it returns napi_number_expected.
+// N-API version: 1
+func NapiGetValueDouble(env NapiEnv, value NapiValue) (float64, NapiStatus) {
+	var res C.double
+	var status = C.napi_get_value_double(env, value, &res)
+	return float64(res), NapiStatus(status)
 }
 
-// NapiGetValueBigintInt64 function ...
-func NapiGetValueBigintInt64(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueBigintInt64 function returns the C int64_t primitive equivalent of
+// the given JavaScript BigInt. If needed it will truncate the value, setting
+// lossless to false.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript BigInt.
+// Returns napi_ok if the API succeeded. If a non-BigInt is passed in it returns
+// napi_bigint_expected.
+// N-API version: -
+func NapiGetValueBigintInt64(env NapiEnv, value NapiValue) (int64, bool, NapiStatus) {
+	var res C.int64_t
+	var lossless C.bool
+	var status = C.napi_get_value_bigint_int64(env, value, &res, &lossless)
+	return int64(res), bool(lossless), NapiStatus(status)
 }
 
-// NapiGetValueBigintUInt64 function ...
-func NapiGetValueBigintUInt64(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueBigintUInt64 function returns the C uint64_t primitive equivalent
+// of the given JavaScript BigInt. If needed it will truncate the value, setting
+// lossless to false.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript BigInt.
+// Returns napi_ok if the API succeeded. If a non-BigInt is passed in it returns
+// napi_bigint_expected.
+// N-API version: -
+func NapiGetValueBigintUInt64(env NapiEnv, value NapiValue) (uint64, bool, NapiStatus) {
+	var res C.uint64_t
+	var lossless C.bool
+	var status = C.napi_get_value_bigint_uint64(env, value, &res, &lossless)
+	return uint64(res), bool(lossless), NapiStatus(status)
 }
 
 // NapiGetValueBigintWords function ...
@@ -748,18 +822,35 @@ func NapiGetValueExternal(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetValueInt32 function ...
-func NapiGetValueInt32(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueInt32 function returns the C int32 primitive equivalent of the
+// given JavaScript Number.
+// If the number exceeds the range of the 32 bit integer, then the result is
+// truncated to the equivalent of the bottom 32 bits. This can result in a large
+// positive number becoming a negative number if the value is > 2^31 -1.
+// Non-finite number values (NaN, +Infinity, or -Infinity) set the result to
+// zero.
+// N-API version: 1
+func NapiGetValueInt32(env NapiEnv, value NapiValue) (int32, NapiStatus) {
+	var res C.int32_t
+	var status = C.napi_get_value_int32(env, value, &res)
+	return int32(res), NapiStatus(status)
 }
 
-// NapiGetValueInt64 function ...
-func NapiGetValueInt64(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueInt64 function returns the C int64 primitive equivalent of the
+// given JavaScript Number.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript Number.
+// Returns napi_ok if the API succeeded. If a non-number NapiValue is passed in
+// it returns napi_number_expected.
+// Number values outside the range of Number.MIN_SAFE_INTEGER -(2^53 - 1) - Number.MAX_SAFE_INTEGER (2^53 - 1)
+// will lose precision.
+// Non-finite number values (NaN, +Infinity, or -Infinity) set the result to
+// zero.
+// N-API version: 1
+func NapiGetValueInt64(env NapiEnv, value NapiValue) (int64, NapiStatus) {
+	var res C.int64_t
+	var status = C.napi_get_value_int64(env, value, &res)
+	return int64(res), NapiStatus(status)
 }
 
 // NapiGetValueStringLatin1 function ...
@@ -776,45 +867,61 @@ func NapiGetValueStringUtf8(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetValueStringUtf16 function ...
+// NapiGetValueStringUtf16 function ...s
 func NapiGetValueStringUtf16(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetValueUint32 function ...
-func NapiGetValueUint32(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiGetValueUint32 function returns the C primitive equivalent of the
+// given NapiValue as a uint32_t
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript Number.
+// Returns napi_ok if the API succeeded. If a non-number NapiValue is passed in
+// it returns napi_number_expected.
+// N-API version: 1
+func NapiGetValueUint32(env NapiEnv, value NapiValue) (uint32, NapiStatus) {
+	var res C.uint32_t
+	var status = C.napi_get_value_uint32(env, value, &res)
+	return uint32(res), NapiStatus(status)
+}
+
+// NapiGetBoolean function returns the JavaScript singleton object that is used
+// to represent the given boolean value.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The value of the boolean to retrieve.
+// N-API version: 1
+func NapiGetBoolean(env NapiEnv, value bool) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_boolean(env, C.bool(value), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetBoolean function ...
-func NapiGetBoolean(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
-}
-
-// NapiGetGlobal function ...
+// NapiGetGlobal function returns JavaScript global object.
+// [in] env: The environment that the API is invoked under.
+// N-API version: 1
 func NapiGetGlobal(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_global(env, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetNull function ...
+// NapiGetNull function returns JavaScript null object.
+// [in] env: The environment that the API is invoked under.
+// N-API version: 1
 func NapiGetNull(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_null(env, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetUndefined function ...
+// NapiGetUndefined function returns JavaScript Undefined value.
+// [in] env: The environment that the API is invoked under.
+// N-API version: 1
 func NapiGetUndefined(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_undefined(env, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
