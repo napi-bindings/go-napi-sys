@@ -925,31 +925,55 @@ func NapiGetUndefined(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCoerceToBool function ...
-func NapiCoerceToBool(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCoerceToBool function implements the abstract operation ToBoolean() as
+// defined in Section 7.1.2 of the ECMAScript Language Specification.
+// This function can be re-entrant if getters are defined on the passed-in
+// Object.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The JavaScript value to coerce.
+// N-API version: 1
+func NapiCoerceToBool(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_coerce_to_bool(env, value, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCoerceToNumber function ...
-func NapiCoerceToNumber(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCoerceToNumber function implements the abstract operation ToNumber() as
+// defined in Section 7.1.3 of the ECMAScript Language Specification.
+// This function can be re-entrant if getters are defined on the passed-in
+// Object.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The JavaScript value to coerce.
+// N-API version: 1
+func NapiCoerceToNumber(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_coerce_to_number(env, value, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCoerceToObject function ...
-func NapiCoerceToObject(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCoerceToObject function implements the abstract operation ToObject() as
+// defined in Section 7.1.13 of the ECMAScript Language Specification.
+// This function can be re-entrant if getters are defined on the passed-in
+// Object.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The JavaScript value to coerce.
+// N-API version: 1
+func NapiCoerceToObject(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_coerce_to_object(env, value, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCoerceToString function ...
-func NapiCoerceToString(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCoerceToString function mplements the abstractoperation ToString() as
+// defined in Section 7.1.13 of the ECMAScript Language Specification.
+// This function can be re-entrant if getters are defined on the passed-in
+// Object.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The JavaScript value to coerce.
+// N-API version: 1
+func NapiCoerceToString(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_coerce_to_string(env, value, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
