@@ -1036,11 +1036,14 @@ func NapiIsBuffer(env NapiEnv, value NapiValue) (bool, NapiStatus) {
 	return bool(res), NapiStatus(status)
 }
 
-// NapiIsTypedArray function ...
-func NapiIsTypedArray(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiIsTypedArray function checks if the Object passed in is a typed array.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The JavaScript value to check.
+// N-API version: 1
+func NapiIsTypedArray(env NapiEnv, value NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_is_typedarray(env, value, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiIsDataview function ...
