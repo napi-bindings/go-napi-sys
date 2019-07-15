@@ -501,11 +501,14 @@ func NapiCreateReference(env NapiEnv, value NapiValue, refCount uint) (NapiRef, 
 	return NapiRef(res), NapiStatus(status)
 }
 
-// NapiDeleteReference function ...
-func NapiDeleteReference(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiDeleteReference function deletes the reference passed in.
+// [in] env: The environment that the API is invoked under.
+// [in] ref: napi_ref to be deleted.
+// This API can be called even if there is a pending JavaScript exception.
+// N-API version: 1
+func NapiDeleteReference(env NapiEnv, ref NapiRef) NapiStatus {
+	var status = C.napi_delete_reference(env, ref)
+	return NapiStatus(status)
 }
 
 // NapiReferenceRef function ...
