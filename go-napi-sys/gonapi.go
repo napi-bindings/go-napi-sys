@@ -462,11 +462,43 @@ func NapiEscapeHandle(env NapiEnv, scope NapiEscapableHandleScope, escapee NapiV
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateReference function ...
-func NapiCreateReference(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// References to objects with a lifespan longer than that of the native method
+// In some cases an addon will need to be able to create and reference objects
+// with a lifespan longer than that of a single native method invocation.
+// For example, to create a constructor and later use that constructor in a
+// request to creates instances, it must be possible to reference the constructor
+// object across many different instance creation requests. This would not be
+// possible with a normal handle returned as a NapiValue as described in the
+// earlier section. The lifespan of a normal handle is managed by scopes and all
+// scopes must be closed before the end of a native method.
+
+// N-API provides methods to create persistent references to an object. Each
+// persistent reference has an associated count with a value of 0 or higher. The
+// count determines if the reference will keep the corresponding object live.
+// References with a count of 0 do not prevent the object from being collected
+// and are often called 'weak' references. Any count greater than 0 will prevent
+// the object from being collected.
+
+// References must be deleted once they are no longer required by the addon.
+// When a reference is deleted it will no longer prevent the corresponding object
+// from being collected. Failure to delete a persistent reference will result in
+// a 'memory leak' with both the native memory for the persistent reference and
+// the corresponding object on the heap being retained forever.
+
+// There can be multiple persistent references created which refer to the same
+// object, each of which will either keep the object live or not based on its
+// individual count.
+
+// NapiCreateReference function creates a new reference with the specified
+// reference count to the Object passed in.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing the Object to which we want a reference.
+// [in] initial_refcount: Initial reference count for the new reference.
+// N-API version: 1
+func NapiCreateReference(env NapiEnv, value NapiValue, refCount uint) (NapiRef, NapiStatus) {
+	var res C.napi_ref
+	var status = C.napi_create_reference(env, value, C.uint(refCount), &res)
+	return NapiRef(res), NapiStatus(status)
 }
 
 // NapiDeleteReference function ...
