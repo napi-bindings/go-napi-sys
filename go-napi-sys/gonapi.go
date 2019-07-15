@@ -1056,11 +1056,16 @@ func NapiIsDataview(env NapiEnv, value NapiValue) (bool, NapiStatus) {
 	return bool(res), NapiStatus(status)
 }
 
-// NapiStrictEquals function ...
-func NapiStrictEquals(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiStrictEquals function is simnilar to invoke the Strict Equality algorithm
+// as defined in Section 7.2.14 of the ECMAScript Language Specification.
+// [in] env: The environment that the API is invoked under.
+// [in] lhs: The JavaScript value to check.
+// [in] rhs: The JavaScript value to check against.
+// N-API version: 1
+func NapiStrictEquals(env NapiEnv, lhs NapiValue, rhs NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_strict_equals(env, lhs, rhs, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiGetPropertyNames function ...
