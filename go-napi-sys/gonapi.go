@@ -1016,11 +1016,14 @@ func NapiIsArray(env NapiEnv, value NapiValue) (bool, NapiStatus) {
 	return bool(res), NapiStatus(status)
 }
 
-// NapiIsArrayBuffer function ...
-func NapiIsArrayBuffer(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiIsArrayBuffer function checks if the Object passed in is an array buffer.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The JavaScript value to check.
+// N-API version: 1
+func NapiIsArrayBuffer(env NapiEnv, value NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_is_arraybuffer(env, value, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiIsBuffer function ...
