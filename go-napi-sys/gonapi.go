@@ -1046,11 +1046,14 @@ func NapiIsTypedArray(env NapiEnv, value NapiValue) (bool, NapiStatus) {
 	return bool(res), NapiStatus(status)
 }
 
-// NapiIsDataview function ...
-func NapiIsDataview(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiIsDataview function checks if the Object passed in is a DataView.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The JavaScript value to check.
+// N-API version: 1
+func NapiIsDataview(env NapiEnv, value NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_is_dataview(env, value, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiStrictEquals function ...
