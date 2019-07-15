@@ -1005,11 +1005,15 @@ func NapiInstanceOf(env NapiEnv, object NapiValue, constructor NapiValue) (bool,
 	return bool(res), NapiStatus(status)
 }
 
-// NapiIsArray function ...
-func NapiIsArray(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiIsArray function is similar to invoke the IsArray operation on the object
+// as defined in Section 7.2.2 of the ECMAScript Language Specification.
+// [in] env: The environment that the API is invoked under.
+// [in] value: The JavaScript value to check.
+// N-API version: 1
+func NapiIsArray(env NapiEnv, value NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_is_array(env, value, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiIsArrayBuffer function ...
