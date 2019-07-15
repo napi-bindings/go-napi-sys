@@ -977,8 +977,8 @@ func NapiCoerceToString(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiTypeOf function is similar to invoking the typeof Operator on the object
-// as defined in Section 12.5.5 of the ECMAScript Language Specification.
+// NapiTypeOf function is similar to invoke the typeof Operator on the object as
+// defined in Section 12.5.5 of the ECMAScript Language Specification.
 // However, it has support for detecting an External value. If value has a type
 // that is invalid, an error is returned.
 // [in] env: The environment that the API is invoked under.
@@ -992,11 +992,17 @@ func NapiTypeOf(env NapiEnv, value NapiValue) (NapiValueType, NapiStatus) {
 	return NapiValueType(res), NapiStatus(status)
 }
 
-// NapiInstanceOf function ...
-func NapiInstanceOf(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiInstanceOf function is similar to invoke the instanceof Operator on the
+// object as defined in Section 12.10.4 of the ECMAScript Language Specification.
+// [in] env: The environment that the API is invoked under.
+// [in] object: The JavaScript value to check.
+// [in] constructor: The JavaScript function object of the constructor function
+// to check against.
+// N-API version: 1
+func NapiInstanceOf(env NapiEnv, object NapiValue, constructor NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_instanceof(env, object, constructor, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiIsArray function ...
