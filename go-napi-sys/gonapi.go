@@ -522,11 +522,15 @@ func NapiReferenceRef(env NapiEnv, ref NapiRef) (uint, NapiStatus) {
 	return uint(res), NapiStatus(status)
 }
 
-// NapiReferenceUnref function ...
-func NapiReferenceUnref(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiReferenceUnref function ecrements the reference count for the reference
+// passed in and returns the resulting reference count.
+// [in] env: The environment that the API is invoked under.
+// [in] ref: napi_ref for which the reference count will be decremented.
+// N-API version: 1
+func NapiReferenceUnref(env NapiEnv, ref NapiRef) (uint, NapiStatus) {
+	var res C.uint
+	var status = C.napi_reference_unref(env, ref, &res)
+	return uint(res), NapiStatus(status)
 }
 
 // NapiGetReferenceValue function ...
