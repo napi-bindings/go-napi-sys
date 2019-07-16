@@ -63,7 +63,23 @@ type NapiDeferred C.napi_deferred
 // NapiPropertyAttributes represents ...
 type NapiPropertyAttributes C.napi_property_attributes
 
-// NapiValueType represents ...
+// NapiValueType describes the type of NapiValue. This generally corresponds to
+// the types described in Section 6.1 of the ECMAScript Language Specification.
+// In addition to types in that section, NapiValueType can also represent
+// Functions and Objects with external data.
+// A JavaScript value of type napi_external appears in JavaScript as a plain
+// object such that no properties can be set on it, and no prototype.
+// Currently the following types are supported:
+//  napi_undefined,
+//  napi_null,
+//  napi_boolean,
+//  napi_number,
+//  napi_string,
+//  napi_symbol,
+//  napi_object,
+//  napi_function,
+//  napi_external,
+//  napi_bigint,
 type NapiValueType C.napi_valuetype
 
 // NapiTypedArrayType represents ...
