@@ -533,10 +533,15 @@ func NapiReferenceUnref(env NapiEnv, ref NapiRef) (uint, NapiStatus) {
 	return uint(res), NapiStatus(status)
 }
 
-// NapiGetReferenceValue function ...
-func NapiGetReferenceValue(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiGetReferenceValue function returns the NapiValue representing the
+// JavaScript Object associated with the NapiRef. Otherwise, result will be
+// NULL.
+// [in] env: The environment that the API is invoked under.
+// [in] ref: napi_ref for which we requesting the corresponding Object.
+// N-API version: 1
+func NapiGetReferenceValue(env NapiEnv, ref NapiRef) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_reference_value(env, ref, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
