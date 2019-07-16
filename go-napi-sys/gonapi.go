@@ -575,17 +575,30 @@ func NapiRemoveCleaupHook(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateArray function ...
+// NapiCreateArray function returns an N-API value corresponding to a JavaScript
+// Array type. JavaScript arrays are described in Section 22.1 of the ECMAScript
+// Language Specification.
+// [in] env: The environment that the N-API call is invoked under.
+// N-API version: 1
 func NapiCreateArray(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_array(env, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateArrayWithLength function ...
-func NapiCreateArrayWithLength(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateArrayWithLength function returns an N-API value corresponding to a
+// JavaScript Array type. The Array's length property is set to the passed-in
+// length parameter. However, the underlying buffer is not guaranteed to be
+// pre-allocated by the VM when the array is created - that behavior is left to
+// the underlying VM implementation.
+// // JavaScript arrays are described in Section 22.1 of the ECMAScript Language
+// Specification.
+// [in] env: The environment that the API is invoked under.
+// [in] length: The initial length of the Array.
+// N-API version: 1
+func NapiCreateArrayWithLength(env NapiEnv, length uint) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_array_with_length(env, C.size_t(length), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
