@@ -1279,12 +1279,16 @@ func NapiGetElement(env NapiEnv, object NapiValue, index uint) (NapiValue, NapiS
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiHasElement function ...
+// NapiHasElement function returns if the Object passed in has an element at the
+// requested index.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object to query.
+// [in] index: The index of the property whose existence to check.
 // N-API version: 1
-func NapiHasElement(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+func NapiHasElement(env NapiEnv, object NapiValue, index uint) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_has_element(env, object, C.uint32_t(index), &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiDeleteElement function ...
