@@ -1205,10 +1205,14 @@ func NapiDeleteProperty(env NapiEnv, object NapiValue, key NapiValue) (bool, Nap
 }
 
 // NapiHasOwnProperty function ...
-func NapiHasOwnProperty(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object to query.
+// [in] key: The name of the own property whose existence to check.
+// N-API version: 1
+func NapiHasOwnProperty(env NapiEnv, object NapiValue, key NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_has_own_property(env, object, key, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiSetNamedProperty function ...
