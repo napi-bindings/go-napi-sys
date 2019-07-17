@@ -1291,12 +1291,15 @@ func NapiHasElement(env NapiEnv, object NapiValue, index uint) (bool, NapiStatus
 	return bool(res), NapiStatus(status)
 }
 
-// NapiDeleteElement function ...
+// NapiDeleteElement function attempts to delete the specified index from object.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object to query.
+// [in] index: The index of the property to delete.
 // N-API version: 1
-func NapiDeleteElement(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+func NapiDeleteElement(env NapiEnv, object NapiValue, index uint) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_delete_element(env, object, C.uint32_t(index), &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiDefineProperties function ...s
