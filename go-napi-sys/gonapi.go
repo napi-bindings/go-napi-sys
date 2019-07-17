@@ -1157,17 +1157,26 @@ func NapiGetPropertyNames(env NapiEnv, object NapiValue) (NapiValue, NapiStatus)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiSetProperty function ...
-func NapiSetProperty(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiSetProperty function set a property on the Object passed in.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object on which to set the property.
+// [in] key: The name of the property to set.
+// [in] value: The property value.
+// N-API version: 1
+func NapiSetProperty(env NapiEnv, object NapiValue, key NapiValue, value NapiValue) NapiStatus {
+	var status = C.napi_set_property(env, object, key, value)
+	return NapiStatus(status)
 }
 
-// NapiGetProperty function ...
-func NapiGetProperty(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiGetProperty function gets the requested property from the Object passed
+// in.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object from which to retrieve the property.
+// [in] key: The name of the property to retrieve.
+// N-API version: 1
+func NapiGetProperty(env NapiEnv, object NapiValue, key NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_property(env, object, key, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
