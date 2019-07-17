@@ -1180,7 +1180,7 @@ func NapiGetProperty(env NapiEnv, object NapiValue, key NapiValue) (NapiValue, N
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiHasProperty function  checks if the Object passed in has the named
+// NapiHasProperty function checks if the Object passed in has the named
 // property.
 // [in] env: The environment that the N-API call is invoked under.
 // [in] object: The object to query.
@@ -1244,12 +1244,18 @@ func NapiGetNamedProperty(env NapiEnv, object NapiValue, key string) (NapiValue,
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiHasNamedProperty function ...
+// NapiHasNamedProperty function checks if the Object passed in has the named
+// property.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object to query.
+// [in] utf8Name: The name of the property whose existence to check.
 // N-API version: 1
-func NapiHasNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+func NapiHasNamedProperty(env NapiEnv, object NapiValue, key string) (bool, NapiStatus) {
+	var res C.bool
+	var ckey = C.CString(key)
+	defer C.free(unsafe.Pointer(ckey))
+	var status = C.napi_has_named_property(env, object, ckey, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiSetElement function ...
