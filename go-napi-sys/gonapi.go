@@ -1258,12 +1258,14 @@ func NapiHasNamedProperty(env NapiEnv, object NapiValue, key string) (bool, Napi
 	return bool(res), NapiStatus(status)
 }
 
-// NapiSetElement function ...
+// NapiSetElement function sets and element on the Object passed in.
+// [in] object: The object from which to set the properties.
+// [in] index: The index of the property to set.
+// [in] value: The property value.
 // N-API version: 1
-func NapiSetElement(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+func NapiSetElement(env NapiEnv, object NapiValue, index uint, value NapiValue) NapiStatus {
+	var status = C.napi_set_element(env, object, C.uint32_t(index), value)
+	return NapiStatus(status)
 }
 
 // NapiGetElement function ...
