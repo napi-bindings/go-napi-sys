@@ -1230,11 +1230,17 @@ func NapiSetNamedProperty(env NapiEnv, object NapiValue, key string, value NapiV
 	return NapiStatus(status)
 }
 
-// NapiGetNamedProperty function ...
+// NapiGetNamedProperty function gets the requested property from the Object
+// passed in.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object from which to retrieve the property.
+// [in] utf8Name: The name of the property to get.
 // N-API version: 1
-func NapiGetNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
+func NapiGetNamedProperty(env NapiEnv, object NapiValue, key string) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var ckey = C.CString(key)
+	defer C.free(unsafe.Pointer(ckey))
+	var status = C.napi_get_named_property(env, object, ckey, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
