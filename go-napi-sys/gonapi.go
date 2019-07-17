@@ -1168,8 +1168,8 @@ func NapiSetProperty(env NapiEnv, object NapiValue, key NapiValue, value NapiVal
 	return NapiStatus(status)
 }
 
-// NapiGetProperty function gets the requested property from the Object passed
-// in.
+// NapiGetProperty function gets the requested property from the Object
+// passed in.
 // [in] env: The environment that the N-API call is invoked under.
 // [in] object: The object from which to retrieve the property.
 // [in] key: The name of the property to retrieve.
@@ -1180,11 +1180,16 @@ func NapiGetProperty(env NapiEnv, object NapiValue, key NapiValue) (NapiValue, N
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiHasProperty function ...
-func NapiHasProperty(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiHasProperty function  checks if the Object passed in has the named
+// sproperty.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object to query.
+// [in] key: The name of the property whose existence to check.
+// N-API version: 1
+func NapiHasProperty(env NapiEnv, object NapiValue, key NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_has_property(env, object, key, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiDeleteProperty function ...
