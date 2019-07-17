@@ -1181,7 +1181,7 @@ func NapiGetProperty(env NapiEnv, object NapiValue, key NapiValue) (NapiValue, N
 }
 
 // NapiHasProperty function  checks if the Object passed in has the named
-// sproperty.
+// property.
 // [in] env: The environment that the N-API call is invoked under.
 // [in] object: The object to query.
 // [in] key: The name of the property whose existence to check.
@@ -1192,11 +1192,16 @@ func NapiHasProperty(env NapiEnv, object NapiValue, key NapiValue) (bool, NapiSt
 	return bool(res), NapiStatus(status)
 }
 
-// NapiDeleteProperty function ...
-func NapiDeleteProperty(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiDeleteProperty function attempts to delete the key own property from
+// object.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object to query.
+// [in] key: The name of the property to delete.
+// N-API version: 1
+func NapiDeleteProperty(env NapiEnv, object NapiValue, key NapiValue) (bool, NapiStatus) {
+	var res C.bool
+	var status = C.napi_delete_property(env, object, key, &res)
+	return bool(res), NapiStatus(status)
 }
 
 // NapiHasOwnProperty function ...
