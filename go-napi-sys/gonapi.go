@@ -1145,10 +1145,15 @@ func NapiStrictEquals(env NapiEnv, lhs NapiValue, rhs NapiValue) (bool, NapiStat
 	return bool(res), NapiStatus(status)
 }
 
-// NapiGetPropertyNames function ...
-func NapiGetPropertyNames(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiGetPropertyNames function returns the names of the enumerable properties
+// of object as an array of strings. The properties of object whose key is a
+// symbol will not be included.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object from which to retrieve the properties.
+// N-API version: 1
+func NapiGetPropertyNames(env NapiEnv, object NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_property_names(env, object, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
