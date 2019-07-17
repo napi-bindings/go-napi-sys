@@ -1204,7 +1204,9 @@ func NapiDeleteProperty(env NapiEnv, object NapiValue, key NapiValue) (bool, Nap
 	return bool(res), NapiStatus(status)
 }
 
-// NapiHasOwnProperty function ...
+// NapiHasOwnProperty function checks if the Object passed in has the named own
+// property. key must be a string or a Symbol, or an error will be thrown. N-API
+// will not perform any conversion between data types.
 // [in] env: The environment that the N-API call is invoked under.
 // [in] object: The object to query.
 // [in] key: The name of the own property whose existence to check.
@@ -1215,14 +1217,21 @@ func NapiHasOwnProperty(env NapiEnv, object NapiValue, key NapiValue) (bool, Nap
 	return bool(res), NapiStatus(status)
 }
 
-// NapiSetNamedProperty function ...
-func NapiSetNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiSetNamedProperty function set a property on the Object passed in.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object on which to set the property.
+// [in] utf8Name: The name of the property to set.
+// [in] value: The property value.
+// N-API version: 1
+func NapiSetNamedProperty(env NapiEnv, object NapiValue, key string, value NapiValue) NapiStatus {
+	var ckey = C.CString(key)
+	defer C.free(unsafe.Pointer(ckey))
+	var status = C.napi_set_named_property(env, object, ckey, value)
+	return NapiStatus(status)
 }
 
 // NapiGetNamedProperty function ...
+// N-API version: 1
 func NapiGetNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_ok
@@ -1230,6 +1239,7 @@ func NapiGetNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
 }
 
 // NapiHasNamedProperty function ...
+// N-API version: 1
 func NapiHasNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_ok
@@ -1237,6 +1247,7 @@ func NapiHasNamedProperty(env NapiEnv) (NapiValue, NapiStatus) {
 }
 
 // NapiSetElement function ...
+// N-API version: 1
 func NapiSetElement(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_ok
@@ -1244,6 +1255,7 @@ func NapiSetElement(env NapiEnv) (NapiValue, NapiStatus) {
 }
 
 // NapiGetElement function ...
+// N-API version: 1
 func NapiGetElement(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_ok
@@ -1251,6 +1263,7 @@ func NapiGetElement(env NapiEnv) (NapiValue, NapiStatus) {
 }
 
 // NapiHasElement function ...
+// N-API version: 1
 func NapiHasElement(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_ok
@@ -1258,6 +1271,7 @@ func NapiHasElement(env NapiEnv) (NapiValue, NapiStatus) {
 }
 
 // NapiDeleteElement function ...
+// N-API version: 1
 func NapiDeleteElement(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
 	var status = C.napi_ok
