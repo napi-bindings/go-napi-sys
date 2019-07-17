@@ -1268,11 +1268,14 @@ func NapiSetElement(env NapiEnv, object NapiValue, index uint, value NapiValue) 
 	return NapiStatus(status)
 }
 
-// NapiGetElement function ...
+// NapiGetElement function gets the element at the requested index.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object from which to retrieve the property.
+// [in] index: The index of the property to get.
 // N-API version: 1
-func NapiGetElement(env NapiEnv) (NapiValue, NapiStatus) {
+func NapiGetElement(env NapiEnv, object NapiValue, index uint) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_element(env, object, C.uint32_t(index), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
