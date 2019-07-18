@@ -60,7 +60,21 @@ type NapiCallbackInfo C.napi_callback_info
 // NapiDeferred represents ...
 type NapiDeferred C.napi_deferred
 
-// NapiPropertyAttributes represents ...
+// NapiPropertyAttributes represents re flags used to control the behavior of
+// properties set on a JavaScript object.
+// Other than napi_static they correspond to the attributes listed in
+// Section 6.1.7.1 of the ECMAScript Language Specification.
+// Currently they can be one or more of the following bitflags:
+// napi_default - Used to indicate that no explicit attributes are set on the
+// given property. By default, a property is read only, not enumerable and not
+// configurable.
+// napi_writable - Used to indicate that a given property is writable.
+// napi_enumerable - Used to indicate that a given property is enumerable.
+// napi_configurable - Used to indicate that a given property is configurable,
+// as defined in Section 6.1.7.1 of the ECMAScript Language Specification.
+// napi_static - Used to indicate that the property will be defined as a static
+// property on a class as opposed to an instance property, which is the default.
+// This is used only by NapiDefineClass. It is ignored by NapiDefineProperties.
 type NapiPropertyAttributes C.napi_property_attributes
 
 // NapiValueType describes the type of NapiValue. This generally corresponds to
@@ -1302,11 +1316,19 @@ func NapiDeleteElement(env NapiEnv, object NapiValue, index uint) (bool, NapiSta
 	return bool(res), NapiStatus(status)
 }
 
-// NapiDefineProperties function ...s
-func NapiDefineProperties(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
+// NapiDefineProperties function allows the efficient definition of multiple
+// properties on a given object. The properties are defined using property
+// descriptors.
+// Given an array of such property descriptors, this function will set the
+// properties on the object one at a time, as defined by DefineOwnProperty()
+// described in Section 9.1.6 of the ECMA262 specification.
+// [in] env: The environment that the N-API call is invoked under.
+// [in] object: The object from which to retrieve the properties.
+// [in] property_count: The number of elements in the properties array.
+// [in] properties: The array of property descriptors.
+func NapiDefineProperties(env NapiEnv) NapiStatus {
 	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+	return NapiStatus(status)
 }
 
 // NapiCallFunction function ...s
