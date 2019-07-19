@@ -1326,77 +1326,263 @@ func NapiDeleteElement(env NapiEnv, object NapiValue, index uint) (bool, NapiSta
 // [in] object: The object from which to retrieve the properties.
 // [in] property_count: The number of elements in the properties array.
 // [in] properties: The array of property descriptors.
+// N-API version: 1
 func NapiDefineProperties(env NapiEnv) NapiStatus {
+	// TODO  napi_define_properties(napi_env env, napi_value object, size_t property_count, const napi_property_descriptor* properties);
 	var status = C.napi_ok
 	return NapiStatus(status)
 }
 
-// NapiCallFunction function ...s
-func NapiCallFunction(env NapiEnv) (NapiValue, NapiStatus) {
+// Working with JavaScript Functions
+// N-API provides a set of APIs that allow JavaScript code to call back into
+// native code.  N-API APIs that support calling back into native code take in a
+// callback functions represented by the NapiCallback type.
+// When the JavaScript VM calls back to native code, the NapiCallback function
+// provided is invoked.
+// Additionally, N-API provides a set of functions which allow calling JavaScript
+// functions from native code. One can either call a function like a regular
+// JavaScript function call, or as a constructor function.
+
+// Any non-NULL data which is passed to this API via the data field of the
+// NapiPropertyDescriptor items can be associated with object and freed whenever
+// object is garbage-collected by passing both object and the data to
+// NapiAddFinalizer.
+
+// NapiCallFunction function allows a JavaScript function object to be called
+// from a native add-on. This is the primary mechanism of calling back from the
+// add-on's native code into JavaScript.
+// For the special case of calling into JavaScript after an async operation,
+// see NapiMakeCallback.
+// [in] env: The environment that the API is invoked under.
+// [in] recv: The this object passed to the called function.
+// [in] func: napi_value representing the JavaScript function to be invoked.
+// [in] argc: The count of elements in the argv array.
+// [in] argv: Array of napi_values representing JavaScript values passed in as
+// arguments to the function.
+// N-API version: 1
+func NapiCallFunction(env NapiEnv, receiver NapiValue, function NapiValue, args []NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// TODO  napi_call_function (napi_env env, napi_value recv, napi_value func, int argc, const napi_value* argv, napi_value* result)
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateFunction function ...
-func NapiCreateFunction(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateFunction function allows an add-on author to create a function
+// object in native code. This is the primary mechanism to allow calling into
+// the add-on's native code from JavaScript.
+// [in] env: The environment that the API is invoked under.
+// [in] utf8Name: The name of the function encoded as UTF8. This is visible
+// within JavaScript as the new function object's name property.
+// [in] length: The length of the utf8name in bytes, or NAPI_AUTO_LENGTH if it
+// is null-terminated.
+// [in] cb: The native function which should be called when this function object
+// is invoked.
+// [in] data: User-provided data context. This will be passed back into the
+// function when invoked later.
+// N-API version: 1
+func NapiCreateFunction(env NapiEnv, name string, cb NapiCallback) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// TODO create_function(napi_env env, const char* utf8name, size_t length, napi_callback cb, void* data, napi_value* result);
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetCbInfo function ...
-func NapiGetCbInfo(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiGetCbInfo function is used within a callback function to retrieve details
+// about the call like the arguments and the this pointer from a given callback
+// info.
+// [in] env: The environment that the API is invoked under.
+// [in] cbinfo: The callback info passed into the callback function.
+// [in-out] argc: Specifies the size of the provided argv array and receives the
+// actual count of arguments.
+// [out] argv: Buffer to which the napi_value representing the arguments are copied. If there are more arguments than the provided count, only the requested number of arguments are copied. If there are fewer arguments provided than claimed, the rest of argv is filled with napi_value values that represent undefined.
+// [out] this: Receives the JavaScript this argument for the call.
+// [out] data: Receives the data pointer for the callback.
+// N-API version: 1
+func NapiGetCbInfo(env NapiEnv, cbinfo NapiCallbackInfo) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// TODO napi_get_cb_info(napi_env env, napi_callback_info cbinfo, size_t* argc, napi_value* argv, napi_value* thisArg, void** data)
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetNewTarget function ...
-func NapiGetNewTarget(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiGetNewTarget function returns the new.target of the constructor call. If
+// the current callback is not a constructor call, the result is NULL.
+// [in] env: The environment that the API is invoked under.
+// [in] cbinfo: The callback info passed into the callback function.
+// N-API version: 1
+func NapiGetNewTarget(env NapiEnv, cbinfo NapiCallbackInfo) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_new_target(env, cbinfo, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiNewInstance function ...
+// NapiNewInstance function  is used to instantiate a new JavaScript value using
+// a given NapiValue that represents the constructor for the object.
+// [in] env: The environment that the API is invoked under.
+// [in] cons: napi_value representing the JavaScript function to be invoked as a
+// constructor.
+// [in] argc: The count of elements in the argv array.
+// [in] argv: Array of JavaScript values as napi_value representing the
+// arguments to the constructor.
+// [out] result: napi_value representing the JavaScript object returned, which in
+// this case is the constructed object.
+// N-API version: 1
 func NapiNewInstance(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// TODO napi_new_instance(napi_env env, napi_value cons, size_t argc, napi_value* argv, napi_value* result)
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiDefineClass function ...
+//Object Wrap
+// N-API offers a way to "wrap" C++ classes and instances so that the class
+// constructor and methods can be called from JavaScript.
+// The NapiDefineClass function defines a JavaScript class with constructor, s
+// tatic properties and methods, and instance properties and methods that
+// correspond to the C++ class.
+// When JavaScript code invokes the constructor, the constructor callback uses
+// NapiWrap to wrap a new C++ instance in a JavaScript object, then returns the
+// wrapper object.
+// When JavaScript code invokes a method or property accessor on the class, the
+// corresponding NapiCallback C++ function is invoked.
+// For wrapped objects it may be difficult to distinguish between a function
+// called on a class prototype and a function called on an instance of a class.
+// A common pattern used to address this problem is to save a persistent
+// reference to the class constructor for later instanceof checks.
+
+// NapiDefineClass function defines a JavaScript class that corresponds to
+// a C++ class.
+// The C++ constructor callback should be a static method on the class that calls
+// the actual class constructor, then wraps the new C++ instance in a JavaScript
+// object, and returns the wrapper object.
+// The JavaScript constructor function returned from napi_define_class is often
+// saved and used later, to construct new instances of the class from native
+// code, and/or check whether provided values are instances of the class. In that
+// case, to prevent the function value from being garbage-collected, create a
+// persistent reference to it using NapiCreateReference and ensure the
+// reference count is kept >= 1.
+// [in] env: The environment that the API is invoked under.
+// [in] utf8name: Name of the JavaScript constructor function; this is not
+// required to be the same as the C++ class name, though it is recommended for
+// clarity.
+// [in] length: The length of the utf8name in bytes, or NAPI_AUTO_LENGTH if it
+// is null-terminated.
+// [in] constructor: Callback function that handles constructing instances of
+// the class. (This should be a static method on the class, not an actual C++
+// constructor function.)
+// [in] data: Optional data to be passed to the constructor callback as the data
+// property of the callback info.
+// [in] property_count: Number of items in the properties array argument.
+// [in] properties: Array of property descriptors describing static and instance
+// data properties, accessors, and methods on the class.
+// See documentation for NapiPropertyDescriptor function.
+// [out] result: A napi_value representing the constructor function for the
+// class.
+// Any non-NULL data which is passed to this API via the data parameter or via
+// the data field of the NapiPropertyDescriptor array items can be associated
+// with the resulting JavaScript constructor (which is returned in the result
+// parameter) and freed whenever the class is garbage-collected by passing both
+// the JavaScript function and the data to NapiAddFinalizer.
+// N-API version: 1
 func NapiDefineClass(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// TODO napi_define_class(napi_env env, const char* utf8name, size_t length, napi_callback constructor, void* data, size_t property_count, const napi_property_descriptor* properties, napi_value* result);
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiWrap function ...
+// NapiWrap function wraps a native instance in a JavaScript object. The native
+// instance can be retrieved later using NapiUnwrap().
+// [in] env: The environment that the API is invoked under.
+// [in] js_object: The JavaScript object that will be the wrapper for the native
+// object.
+// [in] native_object: The native instance that will be wrapped in the
+// JavaScript object.
+// [in] finalize_cb: Optional native callback that can be used to free the native
+// instance when the JavaScript object is ready for garbage-collection.
+// [in] finalize_hint: Optional contextual hint that is passed to the finalize
+// callback.
+// [out] result: Optional reference to the wrapped object.
+// When JavaScript code invokes a constructor for a class that was defined using
+// NapiDefineClass(), the NapiCallback for the constructor is invoked. After
+// constructing an instance of the native class, the callback must then call
+// NapiWrap() to wrap the newly constructed instance in the already-created
+// JavaScript object that is the this argument to the constructor callback. That
+// this object was created from the constructor function's prototype, so it
+// already has definitions of all the instance properties and methods.
+// Typically when wrapping a class instance, a finalize callback should be
+// provided that simply deletes the native instance that is received as the data
+// argument to the finalize callback.
+// The optional returned reference is initially a weak reference, meaning it has
+// a reference count of 0. Typically this reference count would be incremented
+// temporarily during async operations that require the instance to remain valid.
+// N-API version: 1
 func NapiWrap(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// TODO napi_wrap(napi_env env, napi_value js_object, void* native_object, napi_finalize finalize_cb, void* finalize_hint, napi_ref* result);
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiUnwrap function ...
+// NapiUnwrap function retrieves a native instance that was previously wrapped
+// in a JavaScript object using NapiWrap().
+// [in] env: The environment that the API is invoked under.
+// [in] js_object: The object associated with the native instance.
+// [out] result: Pointer to the wrapped native instance.
+// When JavaScript code invokes a method or property accessor on the class, the
+// corresponding NapiCallback is invoked. If the callback is for an instance
+// method or accessor, then the this argument to the callback is the wrapper
+// object; the wrapped C++ instance that is the target of the call can be
+// obtained then by calling NapiUnwrap() on the wrapper object.
+// N-API version: 1
 func NapiUnwrap(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// napi_remove_wrap(napi_env env, napi_value js_object, void** result)
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiRemoveWrap function ...
+// NapiRemoveWrap function retrieves a native instance that was previously
+// wrapped in the JavaScript object using NapiWrap() and removes the wrapping.
+// If a finalize callback was associated with the wrapping, it will no longer be
+// called when the JavaScript object becomes garbage-collected.
+// [in] env: The environment that the API is invoked under.
+// [in] js_object: The object associated with the native instance.
+// [out] result: Pointer to the wrapped native instance.
+// N-API version: 1
 func NapiRemoveWrap(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// TODO napi_remove_wrap(napi_env env, napi_value js_object, void** result)s
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiAddFinalizer function ...
+// NapiAddFinalizer function adds a NapiFinalize callback which will be called
+// when the JavaScript object is ready for garbage collection.
+// [in] env: The environment that the API is invoked under.
+// [in] js_object: The JavaScript object to which the native data will be
+// attached.
+// [in] native_object: The native data that will be attached to the JavaScript
+// object.
+// [in] finalize_cb: Native callback that will be used to free the native data
+// when the JavaScript object is ready for garbage-collection.
+// [in] finalize_hint: Optional contextual hint that is passed to the finalize
+// callback.
+// [out] result: Optional reference to the JavaScript object.
+// This API is similar to NapiWrap() except that:
+//  - the native data cannot be retrieved later using Napinwrap(),
+//  - nor can it be removed later using NapiRemoveWrap(),
+//  - the API can be called multiple times with different data items in order to
+//    attach each of them to the JavaScript object.
+// Caution: The optional returned reference (if obtained) should be deleted via
+// NapiDeleteReference ONLY in response to the finalize callback invocation. If
+// it is deleted before, then the finalize callback may never be invoked.
+// Therefore, when obtaining a reference a finalize callback is also required in
+// order to enable correct disposal of the reference.
+// N-API version: 1
 func NapiAddFinalizer(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
+	// TODO napi_add_finalizer(napi_env env, napi_value js_object, void* native_object, napi_finalize finalize_cb, void* finalize_hint, napi_ref* result)
 	var status = C.napi_ok
 	return NapiValue(res), NapiStatus(status)
 }
