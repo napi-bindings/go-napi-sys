@@ -4,7 +4,7 @@ Go low level bindings for writing safe and fast native Node.js modules.
 
 If you want to know more about all the work behind this module please take a look at
 followings repo: 
-- **[Research for N-API](https://github.com/NickNaso/abi-stable-node-research)**
+- **[Research for N-API](https://github.com/napi-bindings/abi-stable-node-research)**
 
 ### Do not install and use it. I published the module to reserve the name, but for now it does not work.
 
