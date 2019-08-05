@@ -3,12 +3,13 @@ rm -rf *.a && \
 rm -rf libgoaddon.h && \
 echo Start prebuild process ... && \
 echo Cleaning libraries ... && \
-rm -rf lib/libnode_api.a && \
+rm -rf lib && \
 echo Cleaning includes && \
 cd include && \
 rm -rf *.*
 cd .. && \
 echo Adding libraries ... && \
+mkdir lib && \
 cp ../napi-stub/libnode_api.a lib/libnode_api.a && \
 echo Adding includes ... && \
 cp ../napi-stub/js_native_api_types.h include/js_native_api_types.h && \
