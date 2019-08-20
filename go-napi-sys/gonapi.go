@@ -11,6 +11,13 @@ package main
 */
 import "C"
 import "unsafe"
+import "bytes"
+
+func cstring(s string) unsafe.Pointer {
+	p := make([]byte, len(s)+1)
+	copy(p, s)
+	return unsafe.Pointer(&p[0])
+}
 
 // Aliases for JavaScript types
 // Basic N-API Data Types
@@ -785,13 +792,13 @@ func NapiCreateStringLatin1(env NapiEnv, str string) (NapiValue, NapiStatus) {
 // The JavaScript String type is described in Section 6.1.4 of the ECMAScript
 // Language Specification.
 // N-API version: 1
-/*func NapiCreateStringUtf16(env NapiEnv, str string) (NapiValue, NapiStatus) {
+func NapiCreateStringUtf16(env NapiEnv, str string) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	cstr := C.CString(str)
+	cstr := (*C.ushort)(cstring(str))
 	defer C.free(unsafe.Pointer(cstr))
 	var status = C.napi_create_string_utf16(env, cstr, C.NAPI_AUTO_LENGTH, &res)
 	return NapiValue(res), NapiStatus(status)
-}*/
+}
 
 // NapiCreateStringUtf8 function creates a JavaScript String object from a
 // UTF8-encoded C string. The native string is copied.
@@ -944,25 +951,65 @@ func NapiGetValueInt64(env NapiEnv, value NapiValue) (int64, NapiStatus) {
 	return int64(res), NapiStatus(status)
 }
 
-// NapiGetValueStringLatin1 function ...
-func NapiGetValueStringLatin1(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueStringLatin1 function returns the ISO-8859-1-encoded string
+// corresponding the value passed in.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript string.
+// [in] buf: Buffer to write the ISO-8859-1-encoded string into. If NULL is
+// passed in, the length of the string (in bytes) is returned.
+// [in] bufsize: Size of the destination buffer. When this value is insufficient,
+// the returned string will be truncated.
+// [out] result: Number of bytes copied into the buffer, excluding the null
+// terminator.
+// Returns napi_ok if the API succeeded. If a non-String napi_value is passed in
+// it returns napi_string_expected.
+// N-API version: 1
+func NapiGetValueStringLatin1(env NapiEnv, value NapiValue, len uint) (string, NapiStatus) {
+	var buf (*C.char)
+	var res C.size_t
+	var status = C.napi_get_value_string_latin1(env, value, buf, C.size_t(len), &res)
+	return string(C.GoStringN(buf, C.int(res))), NapiStatus(status)
 }
 
-// NapiGetValueStringUtf8 function ...
-func NapiGetValueStringUtf8(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueStringUtf8 function returns the UTF16-encoded string corresponding
+// the value passed in.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript string.
+// [in] buf: Buffer to write the UTF8-encoded string into. If NULL is passed in,
+// the length of the string (in bytes) is returned.
+// [in] bufsize: Size of the destination buffer. When this value is insufficient,
+// the returned string will be truncated.
+// [out] result: Number of bytes copied into the buffer, excluding the null
+// terminator.
+// Returns napi_ok if the API succeeded. If a non-String napi_value is passed in
+// it returns napi_string_expected.
+// N-API version: 1
+func NapiGetValueStringUtf8(env NapiEnv, value NapiValue, len uint) (string, NapiStatus) {
+	var buf (*C.char)
+	var res C.size_t
+	var status = C.napi_get_value_string_utf8(env, value, buf, C.size_t(len), &res)
+	return string(C.GoStringN(buf, C.int(res))), NapiStatus(status)
 }
 
-// NapiGetValueStringUtf16 function ...s
-func NapiGetValueStringUtf16(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueStringUtf16 function returns the UTF16-encoded string
+// corresponding the value passed in.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript string.
+// [in] buf: Buffer to write the UTF16-LE-encoded string into. If NULL is passed
+// in, the length of the string (in 2-byte code units) is returned.
+// [in] bufsize: Size of the destination buffer. When this value is insufficient,
+// the returned string will be truncated.
+// [out] result: Number of 2-byte code units copied into the buffer, excluding
+// the null terminator.
+// Returns napi_ok if the API succeeded. If a non-String napi_value is passed in
+// it returns napi_string_expected.
+// N-API version: 1
+func NapiGetValueStringUtf16(env NapiEnv, value NapiValue, len uint) (string, NapiStatus) {
+	var buf (*C.ushort)
+	var res C.size_t
+	var status = C.napi_get_value_string_utf16(env, value, buf, C.size_t(len), &res)
+	var str = bytes.NewBuffer(C.GoBytes(unsafe.Pointer(buf), C.int(res))).String()
+	return str, NapiStatus(status)
 }
 
 // NapiGetValueUint32 function returns the C primitive equivalent of the
