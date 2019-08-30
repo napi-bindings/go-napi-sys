@@ -815,11 +815,19 @@ func NapiCreateStringUtf8(env NapiEnv, str string) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetArrayLength function ...
-func NapiGetArrayLength(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetArrayLength function returns the length of an array.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing the JavaScript Array whose length is
+// being queried.
+// [out] result: uint32 representing length of the array.
+// Returns napi_ok if the API succeeded.
+// Array length is described in Section 22.1.4.1 of the ECMAScript Language
+// Specification.
+// N-API version: 1
+func NapiGetArrayLength(env NapiEnv, value NapiValue) (uint32, NapiStatus) {
+	var res C.uint32_t
+	var status = C.napi_get_array_length(env, value, &res)
+	return uint32(res), NapiStatus(status)
 }
 
 // NapiGetArrayBufferInfo function ...
