@@ -882,10 +882,19 @@ func NapiCreateObject(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateSymbol function ...
-func NapiCreateSymbol(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateSymbol function creates a JavaScript Symbol object from a
+// UTF8-encoded C string.
+// The JavaScript Symbol type is described in Section 19.4 of the ECMAScript
+// Language Specification.
+// [in] env: The environment that the API is invoked under.
+// [in] description: Optional napi_value which refers to a JavaScript String to
+// be set as the description for the symbol.
+// [out] result: A napi_value representing a JavaScript Symbol.
+// Returns napi_ok if the API succeeded.
+// N-API version: 1
+func NapiCreateSymbol(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_symbol(env, value, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
