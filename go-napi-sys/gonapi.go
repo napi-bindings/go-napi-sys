@@ -67,7 +67,38 @@ type NapiCallbackInfo C.napi_callback_info
 // NapiDeferred represents ...
 type NapiDeferred C.napi_deferred
 
-// NapiPropertyAttributes represents re flags used to control the behavior of
+// This is a struct used as container for types of property atrributes.
+type propertyAttributes struct {
+	NapiDefault      int
+	NapiWritable     int
+	NapiEnumerable   int
+	NapiConfigurable int
+	// Used with napi_define_class to distinguish static properties
+	// from instance properties. Ignored by napi_define_properties.
+	NapiStatic int
+}
+
+// PropertyAttributes contains the flags to control the  behavior of properties
+// set on a JavaScript object. They can be one or more of the following bitflags:
+// - NapiDefault - Used to indicate that no explicit attributes are set on the
+// given property. By default, a property is read only, not enumerable and not
+// configurable.
+// - NapiWritable - Used to indicate that a given property is writable.
+// - NapiEnumerable - Used to indicate that a given property is enumerable.
+// - NapiConfigurable -  Used to indicate that a given property is configurable,
+// as defined in Section 6.1.7.1 of the ECMAScript Language Specification.
+// - NapiStatic - Used to indicate that the property will be defined as a static
+// property on a class as opposed to an instance property, which is the default.
+// This is used only by NapiDefineClass. It is ignored by NapiDfineProperties.
+var PropertyAttributes = &propertyAttributes{
+	NapiDefault:      C.napi_default,
+	NapiWritable:     C.napi_writable,
+	NapiEnumerable:   C.napi_enumerable,
+	NapiConfigurable: C.napi_configurable,
+	NapiStatic:       C.napi_static,
+}
+
+// NapiPropertyAttributes represents the flags used to control the behavior of
 // properties set on a JavaScript object.
 // Other than napi_static they correspond to the attributes listed in
 // Section 6.1.7.1 of the ECMAScript Language Specification.
@@ -83,6 +114,40 @@ type NapiDeferred C.napi_deferred
 // property on a class as opposed to an instance property, which is the default.
 // This is used only by NapiDefineClass. It is ignored by NapiDefineProperties.
 type NapiPropertyAttributes C.napi_property_attributes
+
+// This is a struct used as container for types of NapiValue.
+type valueType struct {
+	// ES6 types (corresponds to typeof)
+	NapiUndefined int
+	NapiNull      int
+	NapiBoolean   int
+	NapiNumber    int
+	NapiString    int
+	NapiSymbol    int
+	NapiObject    int
+	NapiFunction  int
+	NapiExternal  int
+	NapiBigint    int
+}
+
+// ValueType contains the type of a NapiValue. This generally corresponds to the
+// types described in Section 6.1 of the ECMAScript Language Specification. In
+// addition to types in that section, ValueType can also represent Functions and
+// Objects with external data. A JavaScript value of type NapiExternal appears in
+// JavaScript as a plain object such that no properties can be set on it, and no
+//prototype.
+var ValueType = &valueType{
+	NapiUndefined: C.napi_undefined,
+	NapiNull:      C.napi_null,
+	NapiBoolean:   C.napi_boolean,
+	NapiNumber:    C.napi_number,
+	NapiString:    C.napi_string,
+	NapiSymbol:    C.napi_symbol,
+	NapiObject:    C.napi_object,
+	NapiFunction:  C.napi_function,
+	NapiExternal:  C.napi_external,
+	NapiBigint:    C.napi_bigint,
+}
 
 // NapiValueType describes the type of NapiValue. This generally corresponds to
 // the types described in Section 6.1 of the ECMAScript Language Specification.
@@ -103,8 +168,110 @@ type NapiPropertyAttributes C.napi_property_attributes
 //  napi_bigint,
 type NapiValueType C.napi_valuetype
 
-// NapiTypedArrayType represents ...
+// This is a struct used as container for types used in TypedArray.
+type typedArrayType struct {
+	NapiInt8Array         int
+	NapiUInt8Array        int
+	NapiUInt8ClampedArray int
+	NapiInt16Array        int
+	NapiUInt16Array       int
+	NapiInt32Array        int
+	NapiUInt32Array       int
+	NapiFloat32Array      int
+	NapiFloat64Array      int
+	NapiBigInt64Array     int
+	NapiBigUInt64Array    int
+}
+
+// TypedArrayType contains the underlying binary scalar datatype of the
+// TypedArray defined in sectiontion 22.2 of the ECMAScript Language
+// Specification.
+var TypedArrayType = &typedArrayType{
+	NapiInt8Array:         C.napi_int8_array,
+	NapiUInt8Array:        C.napi_uint8_array,
+	NapiUInt8ClampedArray: C.napi_uint8_clamped_array,
+	NapiInt16Array:        C.napi_int16_array,
+	NapiUInt16Array:       C.napi_uint16_array,
+	NapiInt32Array:        C.napi_int32_array,
+	NapiUInt32Array:       C.napi_uint32_array,
+	NapiFloat32Array:      C.napi_float32_array,
+	NapiFloat64Array:      C.napi_float64_array,
+	NapiBigInt64Array:     C.napi_bigint64_array,
+	NapiBigUInt64Array:    C.napi_biguint64_array,
+}
+
+// NapiTypedArrayType represents the underlying binary scalar datatype of the
+// TypedArray defined in sectiontion 22.2 of the ECMAScript Language
+// Specification.
 type NapiTypedArrayType C.napi_typedarray_type
+
+// This is a struct used as container for N-API status.
+type status struct {
+	NapiOK                    int
+	NapiInvalidArg            int
+	NapiObjectExpected        int
+	NapiStringExpected        int
+	NapiNameExpected          int
+	NapiFunctionExpected      int
+	NapiNumberExpected        int
+	NapiBooleanExpected       int
+	NapiArrayExpected         int
+	NapiGenericFailure        int
+	NapiPendingException      int
+	NapiCancelled             int
+	NapiEscapeCalledTwice     int
+	NapiHandleScopeMismatch   int
+	NapiCallbackScopeMismatch int
+	NapiQueueFull             int
+	NapiClosing               int
+	NapiBigintExpected        int
+	NapiDateExpected          int
+}
+
+// Status contains the status code indicating the success or failure of
+// a N-API call. Currently, the following status codes are supported:
+//  napi_ok
+//  napi_invalid_arg
+//  napi_object_expected
+//  napi_string_expected
+//  napi_name_expected
+//  napi_function_expected
+//  napi_number_expected
+//  napi_boolean_expected
+//  napi_array_expected
+//  napi_generic_failure
+//  napi_pending_exception
+//  napi_cancelled
+//  napi_escape_called_twice
+//  napi_handle_scope_mismatch
+//  napi_callback_scope_mismatch
+//  napi_queue_full
+//  napi_closing
+//  napi_bigint_expected
+//  napi_date_expected
+// If additional information is required upon an API returning a failed status,
+// it can be obtained by calling NapiGetLastErrorInfo.
+var Status = &status{
+	NapiOK:                    C.napi_ok,
+	NapiInvalidArg:            C.napi_invalid_arg,
+	NapiObjectExpected:        C.napi_object_expected,
+	NapiStringExpected:        C.napi_string_expected,
+	NapiNameExpected:          C.napi_name_expected,
+	NapiFunctionExpected:      C.napi_function_expected,
+	NapiNumberExpected:        C.napi_number_expected,
+	NapiBooleanExpected:       C.napi_boolean_expected,
+	NapiArrayExpected:         C.napi_array_expected,
+	NapiGenericFailure:        C.napi_generic_failure,
+	NapiPendingException:      C.napi_pending_exception,
+	NapiCancelled:             C.napi_cancelled,
+	NapiEscapeCalledTwice:     C.napi_escape_called_twice,
+	NapiHandleScopeMismatch:   C.napi_handle_scope_mismatch,
+	NapiCallbackScopeMismatch: C.napi_callback_scope_mismatch,
+	NapiQueueFull:             C.napi_queue_full,
+	NapiClosing:               C.napi_closing,
+	NapiBigintExpected:        C.napi_bigint_expected,
+	NapiDateExpected:          C.napi_date_expected,
+}
 
 // NapiStatus represent the status code indicating the success or failure of
 // a N-API call. Currently, the following status codes are supported:
@@ -171,8 +338,44 @@ type NapiAsyncWork C.napi_async_work
 // NapiThreadsafeFunction represents ...
 type NapiThreadsafeFunction C.napi_threadsafe_function
 
-// NapiTheradsafeFunctionReleaseMode represents ...
+// This is a struct used as container for modes to release a
+// NapiThreadSafeFunction.
+type tsfnReleaseMode struct {
+	NapiTsfnRelease int
+	NapiTsfnAbort   int
+}
+
+// TsfnReleaseMode contains values to be given to NapiReleaseThreadsafeFunction()
+// to indicate whether the thread-safe function is to be closed immediately
+// (NapiTsfnAbort) or merely released (NapiTsfnRelease) and thus available for
+// subsequent use via NapiAcquireThreadsafeFunction() and
+// NapiCallThreadsafeFunction().
+var TsfnReleaseMode = &tsfnReleaseMode{
+	NapiTsfnRelease: C.napi_tsfn_release,
+	NapiTsfnAbort:   C.napi_tsfn_abort,
+}
+
+// NapiTheradsafeFunctionReleaseMode represents a value to be given to
+// NapiReleaseThreadsafeFunction() to indicate whether the thread-safe function
+// is to be closed immediately (NapiTsfnAbort) or merely released
+// (NapiTsfnRelease) and thus available for subsequent use via
+// NapiAcquireThreadsafeFunction() and NapiCallThreadsafeFunction().
 type NapiTheradsafeFunctionReleaseMode C.napi_threadsafe_function_release_mode
+
+// This is a struct used as container for types used to call a
+// NapiThreadSafeFunction.
+type tsfnCallMode struct {
+	NapiTsfnNonBlocking int
+	NapiTsfnBlocking    int
+}
+
+// TsfnCallMode contains values to be given to NapiCallThreadsafeFunction() to
+// indicate whether the call should block whenever the queue associated with the
+// thread-safe function is full.
+var TsfnCallMode = &tsfnCallMode{
+	NapiTsfnNonBlocking: C.napi_tsfn_nonblocking,
+	NapiTsfnBlocking:    C.napi_tsfn_blocking,
+}
 
 // NapiThreadsafeFunctionCallMode represents ...
 type NapiThreadsafeFunctionCallMode C.napi_threadsafe_function_call_mode
