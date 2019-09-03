@@ -815,7 +815,7 @@ func NapiCreateArray(env NapiEnv) (NapiValue, NapiStatus) {
 // length parameter. However, the underlying buffer is not guaranteed to be
 // pre-allocated by the VM when the array is created - that behavior is left to
 // the underlying VM implementation.
-// // JavaScript arrays are described in Section 22.1 of the ECMAScript Language
+// avaScript arrays are described in Section 22.1 of the ECMAScript Language
 // Specification.
 // [in] env: The environment that the API is invoked under.
 // [in] length: The initial length of the Array.
@@ -868,10 +868,17 @@ func NapiCreateExternalBuffer(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateObject function ...
+// NapiCreateObject function allocates a default JavaScript Object. It is the
+// equivalent of doing new Object() in JavaScript.
+// The JavaScript Object type is described in Section 6.1.7 of the ECMAScript
+// Language Specification.
+// [in] env: The environment that the API is invoked under.
+// [out] result: A napi_value representing a JavaScript Object.
+// Returns napi_ok if the API succeeded.
+// N-API version: 1
 func NapiCreateObject(env NapiEnv) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_object(env, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
