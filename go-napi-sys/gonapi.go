@@ -982,10 +982,21 @@ func NapiCreateBigintUInt64(env NapiEnv, value uint64) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateBigintWords function ...
-func NapiCreateBigintWords() (NapiValue, NapiStatus) {
+// NapiCreateBigintWords function converts an array of unsigned 64-bit words into
+// a single BigInt value.
+// [in] env: The environment that the API is invoked under.
+// [in] sign_bit: Determines if the resulting BigInt will be positive or
+// negative.
+// [in] word_count: The length of the words array.
+// [in] words: An array of uint64_t little-endian 64-bit words.
+// [out] result: A napi_value representing a JavaScript BigInt.
+// Returns napi_ok if the API succeeded.
+// N-API version: -
+func NapiCreateBigintWords(env NapiEnv, sign int, words []uint64) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var raw = (unsafe.Pointer(&words[0]))
+	defer C.free(raw)
+	var status = C.napi_create_bigint_words(env, C.int(sign), C.size_t(len(words)), (*C.uint64_t)(raw), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
