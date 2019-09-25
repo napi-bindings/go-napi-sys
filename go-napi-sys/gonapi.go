@@ -10,9 +10,13 @@ package main
 #include <node_api.h>
 */
 import "C"
-import "unsafe"
-import "bytes"
+import (
+	"bytes"
+	"unsafe"
+)
 
+// ccstring function transforms a Go string into a C string (array of characters)
+// and returns the pointer to the first element.
 func cstring(s string) unsafe.Pointer {
 	p := make([]byte, len(s)+1)
 	copy(p, s)
@@ -61,10 +65,15 @@ type NapiHandleScope C.napi_handle_scope
 // values created within a particular handle scope to a parent scope.
 type NapiEscapableHandleScope C.napi_escapable_handle_scope
 
-// NapiCallbackInfo represents ...
+// NapiCallbackInfo is an opaque datatype that is passed to a callback function.
+// It can be used for getting additional information about the context in which
+// the callback was invoked.
 type NapiCallbackInfo C.napi_callback_info
 
-// NapiDeferred represents ...
+// NapiDeferred known sa "deferred" object is created and returned alongside a
+// Promise. The deferred object is bound to the created Promise and is the only
+// means to resolve or reject the Promise. The  deferred object will be
+// automatically freed on rejection or on resolving the Promise.
 type NapiDeferred C.napi_deferred
 
 // This is a struct used as container for types of property atrributes.
@@ -297,13 +306,26 @@ var Status = &status{
 // it can be obtained by calling NapiGetLastErrorInfo.
 type NapiStatus C.napi_status
 
-// NapiCallback represents ...
+// NapiCallback represents a function pointer type for user-provided native
+// functions which are to be exposed to JavaScript via N-API. Callback functions
+// should satisfy the following signature:
+// typedef napi_value (*napi_callback)(napi_env, napi_callback_info);
 type NapiCallback C.napi_callback
 
-// NapiFinalize represents ...
+// NapiFinalize represents a function pointer type for add-on provided functions
+// that allow the user to be notified when externally-owned data is ready to be
+// cleaned up because the object with which it was associated with, has been
+// garbage-collected. The user must provide a function satisfying the following
+// signature which would get called upon the object's collection. Currently,
+// `napi_finalize` can be used for finding out when objects that have external
+// data are collected. Finalize functions hould satisfy the following signature:
+// typedef void (*napi_finalize)(napi_env env,
+//								 void* finalize_data,
+//								 void* finalize_hint);
 type NapiFinalize C.napi_finalize
 
-// NapiPropertyDescriptor represents ...
+// NapiPropertyDescriptor is a data structure that used to define the properties
+// of a JavaScript object.
 type NapiPropertyDescriptor C.napi_property_descriptor
 
 // NapiExtendedErrorInfo contains additional information about a failed status
@@ -326,16 +348,21 @@ type NapiExtendedErrorInfo *C.napi_extended_error_info
 
 // Aliases for types strickly connected with the runtime
 
-// NapiCallbackScope represents ...
+// NapiCallbackScope represents
 type NapiCallbackScope C.napi_callback_scope
 
-// NapiAyncContext represents ...
+// NapiAyncContext represents the context for the async operation that is
+// invoking a callback. This should normally be a value previously obtained from
+// `napi_async_init`. However `NULL` is also allowed, which indicates the current
+// async context (if any) is to be used for the callback.
 type NapiAyncContext C.napi_async_context
 
-// NapiAsyncWork represents ...
+// NapiAsyncWork represents the handle for the newly created asynchronous work
+// and it is used to execute logic asynchronously.
 type NapiAsyncWork C.napi_async_work
 
-// NapiThreadsafeFunction represents ...
+// NapiThreadsafeFunction is an opaque pointer that represents a JavaScript
+// function which can be called asynchronously from multiple threads.
 type NapiThreadsafeFunction C.napi_threadsafe_function
 
 // This is a struct used as container for modes to release a
@@ -377,16 +404,38 @@ var TsfnCallMode = &tsfnCallMode{
 	NapiTsfnBlocking:    C.napi_tsfn_blocking,
 }
 
-// NapiThreadsafeFunctionCallMode represents ...
+// NapiThreadsafeFunctionCallMode contains values used to indicate whether the
+// call should block whenever the queue associated with the thread-safe function
+// is full.
 type NapiThreadsafeFunctionCallMode C.napi_threadsafe_function_call_mode
 
-// NapiAsyncExecuteCallback represents ...
+// NapiAsyncExecuteCallback is a function pointer used with functions that
+// support asynchronous operations. Callback functions must statisfy the
+// following signature:
+// typedef void (*napi_async_execute_callback)(napi_env env, void* data);
+// Implementations of this type of function should avoid making any N-API calls
+// that could result in the execution of JavaScript or interaction with
+// JavaScript objects.
 type NapiAsyncExecuteCallback C.napi_async_execute_callback
 
-// NapiAsyncCompleteCallback represents ...
+// NapiAsyncCompleteCallback is a function pointer used with functions that
+// support asynchronous operations. Callback functions must statisfy the
+// following signature:
+// typedef void (*napi_async_complete_callback)(napi_env env,
+//												napi_status status,
+//												void* data);
 type NapiAsyncCompleteCallback C.napi_async_complete_callback
 
-// NapiThreadsafeFunctionCallJS represents ...
+// NapiThreadsafeFunctionCallJS is a function pointer used with asynchronous
+// thread-safe function calls. The callback will be called on the main thread.
+// Its purpose is to use a data item arriving via the queue from one of the
+// secondary threads to construct the parameters necessary for a call into
+// JavaScript.
+// Callback functions must satisfy the following signature:
+// typedef void (*napi_threadsafe_function_call_js)(napi_env env,
+//													napi_value js_callback,
+//													void* context,
+//													void* data);
 type NapiThreadsafeFunctionCallJS C.napi_threadsafe_function_call_js
 
 // NapiNodeVersion is a structure that contains informations about the version
@@ -2068,37 +2117,49 @@ func NapiUnrefThreadsafeFunction(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// Caller contains a callback to call
-type Caller struct{}
+// CCallback  ...
+type CCallback func(NapiEnv, NapiCallbackInfo) NapiValue
 
-func (s *Caller) cb(env C.napi_env, info C.napi_callback_info) C.napi_value {
+// Caller contains a callback to call
+type Caller struct {
+	cb CCallback
+}
+
+/*func (s *Caller) cb(env C.napi_env, info C.napi_callback_info) C.napi_value {
 	value, _ := NapiCreateInt32(NapiEnv(env), 7)
 	return C.napi_value(value)
+}*/
+
+func createInt32(env NapiEnv, info NapiCallbackInfo) NapiValue {
+	value, _ := NapiCreateInt32(NapiEnv(env), 7)
+	return value
 }
 
 //export ExecuteCallback
 func ExecuteCallback(data unsafe.Pointer, env C.napi_env, info C.napi_callback_info) C.napi_value {
 	caller := (*Caller)(data)
-	return caller.cb(env, info)
+	return (C.napi_value)(caller.cb(NapiEnv(env), NapiCallbackInfo(info)))
 }
 
 //export Initialize
-func Initialize(env C.napi_env, exports C.napi_value) C.napi_value {
+func Initialize(env NapiEnv, exports NapiValue) C.napi_value {
 	name := C.CString("createInt32")
 	defer C.free(unsafe.Pointer(name))
-	caller := &Caller{}
-	desc := C.napi_property_descriptor{
+	caller := &Caller{
+		cb: createInt32,
+	}
+	desc := NapiPropertyDescriptor{
 		utf8name:   name,
 		name:       nil,
-		method:     (C.napi_callback)(C.CallbackMethod(unsafe.Pointer(&caller))), //nil,
+		method:     (C.napi_callback)(C.CallbackMethod(unsafe.Pointer(caller))), //nil,
 		getter:     nil,
 		setter:     nil,
 		value:      nil,
 		attributes: C.napi_default,
 		data:       nil,
 	}
-	C.napi_define_properties(env, exports, 1, &desc)
-	return exports
+	C.napi_define_properties(env, exports, 1, (*C.napi_property_descriptor)(&desc))
+	return (C.napi_value)(exports)
 }
 
 func main() {}
