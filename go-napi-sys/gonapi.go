@@ -975,10 +975,24 @@ func NapiCreateExternalArrayBuffer(env NapiEnv, length uint, raw unsafe.Pointer)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateExternalBuffer function ...
-func NapiCreateExternalBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateExternalBuffer function allocates a node::Buffer object and
+// initializes it with data backed by the passed in buffer. While this is still a
+// fully-supported data structure, in most cases using a TypedArray will suffice.
+// [in] env: The environment that the API is invoked under.
+// [in] length: Size in bytes of the input buffer (should be the same as the size
+// of the new buffer).
+// [in] data: Raw pointer to the underlying buffer to copy from.
+// [in] finalize_cb: Optional callback to call when the ArrayBuffer is being
+// collected.
+// [in] finalize_hint: Optional hint to pass to the finalize callback during
+// collection.
+// [out] result: A napi_value representing a node::Buffer.
+// Remember that fsor Node.js >=4 Buffers are Uint8Array.
+//  N-API version: 1
+func NapiCreateExternalBuffer(env NapiEnv, length uint, raw unsafe.Pointer) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	// Remember to handle napi_finalize finalize_cb and void* finalize_hint
+	var status = C.napi_create_external_buffer(env, C.size_t(length), raw, nil, nil, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
