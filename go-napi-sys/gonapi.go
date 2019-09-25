@@ -953,10 +953,25 @@ func NapiCreateExternal(env NapiEnv, raw unsafe.Pointer) (NapiValue, NapiStatus)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateExternalArrayBuffer function ...
-func NapiCreateExternalArrayBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateExternalArrayBuffer function returns an N-API value corresponding to
+// a JavaScript ArrayBuffer. The underlying byte buffer of the ArrayBuffer is
+// externally allocated and managed. The caller must ensure that the byte buffer
+// remains valid until the finalize callback is called.
+// [in] env: The environment that the API is invoked under.
+// [in] external_data: Pointer to the underlying byte buffer of the ArrayBuffer.
+// [in] byte_length: The length in bytes of the underlying buffer.
+// [in] finalize_cb: Optional callback to call when the ArrayBuffer is being
+// collected.
+// [in] finalize_hint: Optional hint to pass to the finalize callback during
+// collection.
+// [out] result: A napi_value representing a JavaScript ArrayBuffer.
+// JavaScript ArrayBuffers are described in Section 24.1 of the ECMAScript
+// Language Specification.
+// N-API version: 1
+func NapiCreateExternalArrayBuffer(env NapiEnv, length uint, raw unsafe.Pointer) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	// Remember to handle napi_finalize finalize_cb and void* finalize_hint
+	var status = C.napi_create_external_arraybuffer(env, raw, C.size_t(length), nil, nil, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
