@@ -1301,11 +1301,17 @@ func NapiGetValueBigintWords(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-//NapiGetValueExternal function ...
-func NapiGetValueExternal(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueExternal function returns external data pointer that was
+// previously passed to NapiCreateExternal.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript external value.
+// [out] result: Pointer to the data wrapped by the JavaScript external value.
+// If a non-external napi_value is passed in it returns napi_invalid_arg.
+// N-API version: 1
+func NapiGetValueExternal(env NapiEnv, value NapiValue) (unsafe.Pointer, NapiStatus) {
+	var res unsafe.Pointer
+	var status = C.napi_get_value_external(env, value, &res)
+	return res, NapiStatus(status)
 }
 
 // NapiGetValueInt32 function returns the C int32 primitive equivalent of the
