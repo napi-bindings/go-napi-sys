@@ -1210,10 +1210,17 @@ func NapiGetArrayBufferInfo(env NapiEnv) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetPrototype function ...
-func NapiGetPrototype(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiGetPrototype function returns a N-API value representing the prototype of
+// the given object.
+// [in] env: The environment that the API is invoked under.
+// [in] object: napi_value representing JavaScript Object whose prototype to
+// return. This returns the equivalent of Object.getPrototypeOf (which is not the
+// same as the function's prototype property).
+// [out] result: napi_value representing prototype of the given object.
+// N-API version: 1
+func NapiGetPrototype(env NapiEnv, object NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_get_prototype(env, (C.napi_value)(object), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
