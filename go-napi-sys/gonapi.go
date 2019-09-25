@@ -931,10 +931,25 @@ func NapiCreateBufferCopy(env NapiEnv, length uint, raw unsafe.Pointer) (NapiVal
 	return NapiValue(res), data, NapiStatus(status)
 }
 
-// NapiCreateExternal function ...
-func NapiCreateExternal(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateExternal function allocates a JavaScript value with external data
+// attached to it. This is used to pass external data through JavaScript code, so
+// it can be retrieved later by native code. The API allows the caller to pass in
+// a finalize callback, in case the underlying native resource needs to be
+// cleaned up when the external JavaScript value gets collected.
+// [in] env: The environment that the API is invoked under.
+// [in] data: Raw pointer to the external data.
+// [in] finalize_cb: Optional callback to call when the external value is being
+// collected.
+// [in] finalize_hint: Optional hint to pass to the finalize callback during
+// collection.
+// [out] result: A napi_value representing an external value.
+// The created value is not an object, and therefore does not support additional
+// properties. It is considered a distinct value type `napi_external`.
+// N-API version: 1
+func NapiCreateExternal(env NapiEnv, raw unsafe.Pointer) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	// Remember to handle napi_finalize finalize_cb and void* finalize_hint
+	var status = C.napi_create_external(env, raw, nil, nil, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
