@@ -875,11 +875,28 @@ func NapiCreateArrayWithLength(env NapiEnv, length uint) (NapiValue, NapiStatus)
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateArrayBuffer function ...
-func NapiCreateArrayBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateArrayBuffer function returns N-API value corresponding to a
+// JavaScript `ArrayBuffer`. ArrayBuffer is a data stucture used to represent
+// fixed-length binary data buffers. They are normally used as backing-buffer for
+// `TypedArray` objects. The ArrayBuffer allocated will have an underlying byte
+// buffer whose size is determined by the length parameter that's passed in. The
+// underlying buffer is optionally returned back to the caller in case the caller
+// wants to directly manipulate the buffer.
+// This buffer can only be written to directly from native code.
+// To write to this buffer from JavaScript, a typed array or DataView object
+// would need to be created.
+// JavaScript ArrayBuffer objects are described in Section 24.1 of the ECMAScript
+// Language Specification.
+// [in] env: The environment that the API is invoked under.
+// [in] length: The length in bytes of the array buffer to create.
+// [out] data: Pointer to the underlying byte buffer of the ArrayBuffer.
+// [out] result: A napi_value representing a JavaScript ArrayBuffer.
+// N-API version: 1
+func NapiCreateArrayBuffer(env NapiEnv, length uint) (NapiValue, unsafe.Pointer, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+	var data unsafe.Pointer
+	var status = C.napi_create_arraybuffer(env, C.size_t(length), &data, &res)
+	return NapiValue(res), data, NapiStatus(status)
 }
 
 // NapiCreateBuffer function ...
