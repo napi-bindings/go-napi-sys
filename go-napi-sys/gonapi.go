@@ -914,11 +914,21 @@ func NapiCreateBuffer(env NapiEnv, length uint) (NapiValue, unsafe.Pointer, Napi
 	return NapiValue(res), data, NapiStatus(status)
 }
 
-// NapiCreateBufferCopy function ...
-func NapiCreateBufferCopy(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateBufferCopy function  allocates a node::Buffer object and initializes
+// it with data copied from the passed-in buffer. While this is still a
+// fully-supported data structure, in most cases using a TypedArray will suffice.
+// [in] env: The environment that the API is invoked under.
+// [in] length: Size in bytes of the input buffer (should be the same as the size
+// of the new buffer).
+// [in] data: Raw pointer to the underlying buffer to copy from.
+// [out] result_data: Pointer to the new Buffer's underlying data buffer.
+// [out] result: A napi_value representing a node::Buffer.
+// N-API version: 1
+func NapiCreateBufferCopy(env NapiEnv, length uint, raw unsafe.Pointer) (NapiValue, unsafe.Pointer, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+	var data unsafe.Pointer
+	var status = C.napi_create_buffer_copy(env, C.size_t(length), raw, &data, &res)
+	return NapiValue(res), data, NapiStatus(status)
 }
 
 // NapiCreateExternal function ...
