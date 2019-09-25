@@ -899,11 +899,19 @@ func NapiCreateArrayBuffer(env NapiEnv, length uint) (NapiValue, unsafe.Pointer,
 	return NapiValue(res), data, NapiStatus(status)
 }
 
-// NapiCreateBuffer function ...
-func NapiCreateBuffer(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateBuffer function returns N-API value that allocates a node::Buffer
+// object. While this is still a fully-supported data structure, in most cases
+// musing a TypedArray will suffice.
+// [in] env: The environment that the API is invoked under.
+// [in] size: Size in bytes of the underlying buffer.
+// [out] data: Raw pointer to the underlying buffer.
+// [out] result: A napi_value representing a node::Buffer.
+// N-API version: 1
+func NapiCreateBuffer(env NapiEnv, length uint) (NapiValue, unsafe.Pointer, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+	var data unsafe.Pointer
+	var status = C.napi_create_buffer(env, C.size_t(length), &data, &res)
+	return NapiValue(res), data, NapiStatus(status)
 }
 
 // NapiCreateBufferCopy function ...
