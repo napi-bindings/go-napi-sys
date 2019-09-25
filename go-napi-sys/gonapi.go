@@ -1026,10 +1026,25 @@ func NapiCreateSymbol(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateTypedArray function ...
-func NapiCreateTypedArray(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateTypedArray function JavaScript TypedArray object over an existing
+// ArrayBuffer.  TypedArray objects provide an array-like view over an underlying
+// data buffer where each element has the same underlying binary scalar datatype.
+// It's required that:
+// (length * size_of_element) + byte_offset should be <= the size in bytes of the
+// array passed in. If not, a RangeError exception is raised.
+// [in] env: The environment that the API is invoked under.
+// [in] type: Scalar datatype of the elements within the TypedArray.
+// [in] length: Number of elements in the TypedArray.
+// [in] arraybuffer: ArrayBuffer underlying the typed array.
+// [in] byte_offset: The byte offset within the ArrayBuffer from which to start
+// projecting the TypedArray.
+// [out] result: A napi_value representing a JavaScript TypedArray.
+// JavaScript TypedArray objects are described in Section 22.2 of the ECMAScript
+// Language Specification.
+// N-API version: 1
+func NapiCreateTypedArray(env NapiEnv, arrayType NapiTypedArrayType, lenght uint, value NapiValue, offset uint) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_typedarray(env, (C.napi_typedarray_type)(arrayType), C.size_t(lenght), (C.napi_value)(value), C.size_t(offset), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
