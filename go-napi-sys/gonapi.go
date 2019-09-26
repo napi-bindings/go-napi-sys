@@ -1048,10 +1048,25 @@ func NapiCreateTypedArray(env NapiEnv, arrayType NapiTypedArrayType, lenght uint
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiCreateDataview function ...
-func NapiCreateDataview(env NapiEnv) (NapiValue, NapiStatus) {
+// NapiCreateDataview function creates a JavaScript DataView object over an
+// existing ArrayBuffer. DataView objects provide an array-like view over an
+// underlying data buffer, but one which allows items of different size and type
+// in the ArrayBuffer.
+// [in] env: The environment that the API is invoked under.
+// [in] length: Number of elements in the DataView.
+// [in] arraybuffer: ArrayBuffer underlying the DataView.
+// [in] byte_offset: The byte offset within the ArrayBuffer from which to start
+// projecting the DataView.
+// [out] result: A napi_value representing a JavaScript DataView.
+// It is required that byte_length + byte_offset is less than or equal to the
+// size in bytes of the array passed in. If not, a RangeError exception is
+// raised.
+// JavaScript DataView objects are described in Section 24.3 of the ECMAScript
+// Language Specification.
+// N-API version: 1
+func NapiCreateDataview(env NapiEnv, length uint, offset uint, value NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	var status = C.napi_ok
+	var status = C.napi_create_dataview(env, C.size_t(length), (C.napi_value)(value), C.size_t(offset), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
