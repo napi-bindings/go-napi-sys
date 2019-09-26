@@ -1244,7 +1244,7 @@ func NapiGetPrototype(env NapiEnv, object NapiValue) (NapiValue, NapiStatus) {
 // data - byte_offset.
 // Warning: Use caution while using this API since the underlying data buffer is
 // managed by the VM.
-//  N-API version: 1
+// N-API version: 1
 func NapiGetTypedArrayInfo(env NapiEnv, value NapiValue) (NapiValue, NapiTypedArrayType, uint, unsafe.Pointer, uint, NapiStatus) {
 	var arrayType C.napi_typedarray_type
 	var length C.size_t
@@ -1255,11 +1255,22 @@ func NapiGetTypedArrayInfo(env NapiEnv, value NapiValue) (NapiValue, NapiTypedAr
 	return NapiValue(arraybuffer), NapiTypedArrayType(arrayType), uint(length), data, uint(offset), NapiStatus(status)
 }
 
-// NapiGetDataviewInfo function ...
-func NapiGetDataviewInfo(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetDataviewInfo function eturns various properties of a DataView.
+// [in] env: The environment that the API is invoked under.
+// [in] dataview: napi_value representing the DataView whose properties to query.
+// [out] byte_length: Number of bytes in the DataView.
+// [out] data: The data buffer underlying the DataView.
+// [out] arraybuffer: ArrayBuffer underlying the DataView.
+// [out] byte_offset: The byte offset within the data buffer from which to start
+// projecting the DataView.
+// N-API version: 1
+func NapiGetDataviewInfo(env NapiEnv, value NapiValue) (NapiValue, uint, uint, NapiStatus) {
+	var length C.size_t
+	var data unsafe.Pointer
+	var arraybuffer C.napi_value
+	var offset C.size_t
+	var status = C.napi_get_dataview_info(env, value, &length, &data, &arraybuffer, &offset)
+	return NapiValue(arraybuffer), uint(length), uint(offset), NapiStatus(status)
 }
 
 // NapiGetValueBool function returns the C boolean primitive equivalent of the
