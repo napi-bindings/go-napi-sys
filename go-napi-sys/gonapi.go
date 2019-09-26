@@ -1203,11 +1203,15 @@ func NapiGetArrayLength(env NapiEnv, value NapiValue) (uint32, NapiStatus) {
 	return uint32(res), NapiStatus(status)
 }
 
-// NapiGetArrayBufferInfo function ...
-func NapiGetArrayBufferInfo(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetArrayBufferInfo function the underlying data buffer of a node::Buffer
+// and it's length.
+// [in] env: The environment that the API is invoked under.
+//  N-API version: 1
+func NapiGetArrayBufferInfo(env NapiEnv, value NapiValue) (unsafe.Pointer, uint, NapiStatus) {
+	var data unsafe.Pointer
+	var length C.size_t
+	var status = C.napi_get_buffer_info(env, value, &data, &length)
+	return data, uint(length), NapiStatus(status)
 }
 
 // NapiGetPrototype function returns a N-API value representing the prototype of
