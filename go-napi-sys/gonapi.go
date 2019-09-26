@@ -1294,11 +1294,25 @@ func NapiGetValueBigintUInt64(env NapiEnv, value NapiValue) (uint64, bool, NapiS
 	return uint64(res), bool(lossless), NapiStatus(status)
 }
 
-// NapiGetValueBigintWords function ...
-func NapiGetValueBigintWords(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetValueBigintWords function returns a single `BigInt` value into a sign
+// bit, 64-bit little endian array, and the number of elements backed in the
+// array. The sign_bit and words may be both set to NULL, in order to get only
+// word_count.
+// [in] env: The environment that the API is invoked under.
+// [in] value: napi_value representing JavaScript BigInt.
+// [out] sign_bit: Integer representing if the JavaScript BigInt is positive or
+// negative.
+// [in/out] word_count: Must be initialized to the length of the words array.
+// Upon return, it will be set to the actual number of words that would be
+// needed to store this BigInt.
+// [out] words: Pointer to a pre-allocated 64-bit word array.
+// N-API version: -
+func NapiGetValueBigintWords(env NapiEnv, value NapiValue) (unsafe.Pointer, uint, int, NapiStatus) {
+	var count C.size_t
+	var sign C.int
+	var words unsafe.Pointer
+	var status = C.napi_get_value_bigint_words(env, value, &sign, &count, (*C.uint64_t)(words))
+	return words, uint(count), int(sign), NapiStatus(status)
 }
 
 // NapiGetValueExternal function returns external data pointer that was
