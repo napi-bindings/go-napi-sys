@@ -1224,11 +1224,31 @@ func NapiGetPrototype(env NapiEnv, object NapiValue) (NapiValue, NapiStatus) {
 	return NapiValue(res), NapiStatus(status)
 }
 
-// NapiGetTypedArrayInfo function ...
-func NapiGetTypedArrayInfo(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+// NapiGetTypedArrayInfo function returns various properties of a typed array.
+// [in] env: The environment that the API is invoked under.
+// [in] typedarray: napi_value representing the TypedArray whose properties to
+// query.
+// [out] type: Scalar datatype of the elements within the TypedArray.
+// [out] length: The number of elements in the TypedArray.
+// [out] data: The data buffer underlying the TypedArray adjusted by the
+// byte_offset value so that it points to the first element in the TypedArray.
+// [out] arraybuffer: The ArrayBuffer underlying the TypedArray.
+// [out] byte_offset: The byte offset within the underlying native array at
+// which the first element of the arrays is located. The value for the data
+// parameter has already been adjusted so that data points to the first element
+// in the array. Therefore, the first byte of the native array would be at
+// data - byte_offset.
+// Warning: Use caution while using this API since the underlying data buffer is
+// managed by the VM.
+//  N-API version: 1
+func NapiGetTypedArrayInfo(env NapiEnv, value NapiValue) (NapiValue, NapiTypedArrayType, uint, unsafe.Pointer, uint, NapiStatus) {
+	var arrayType C.napi_typedarray_type
+	var length C.size_t
+	var data unsafe.Pointer
+	var arraybuffer C.napi_value
+	var offset C.size_t
+	var status = C.napi_get_typedarray_info(env, value, &arrayType, &length, &data, &arraybuffer, &offset)
+	return NapiValue(arraybuffer), NapiTypedArrayType(arrayType), uint(length), data, uint(offset), NapiStatus(status)
 }
 
 // NapiGetDataviewInfo function ...
