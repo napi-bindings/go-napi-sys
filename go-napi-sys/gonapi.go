@@ -1887,8 +1887,11 @@ func NapiCallFunction(env NapiEnv, receiver NapiValue, function NapiValue, args 
 // N-API version: 1
 func NapiCreateFunction(env NapiEnv, name string, cb NapiCallback) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	// TODO create_function(napi_env env, const char* utf8name, size_t length, napi_callback cb, void* data, napi_value* result);
-	var status = C.napi_ok
+	var cname = C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	// TODO Determine how to append data to function.
+	// create_function(napi_env env, const char* utf8name, size_t length, napi_callback cb, void* data, napi_value* result);
+	var status = C.napi_create_function(env, cname, C.NAPI_AUTO_LENGTH, cb, nil, &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
