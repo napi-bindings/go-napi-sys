@@ -1866,10 +1866,11 @@ func NapiDefineProperties(env NapiEnv, value NapiValue, properties []NapiPropert
 // [in] argv: Array of napi_values representing JavaScript values passed in as
 // arguments to the function.
 // N-API version: 1
-func NapiCallFunction(env NapiEnv, receiver NapiValue, function NapiValue, args []NapiValue) (NapiValue, NapiStatus) {
+func NapiCallFunction(env NapiEnv, receiver NapiValue, function NapiValue, arguments []NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	// TODO  napi_call_function (napi_env env, napi_value recv, napi_value func, int argc, const napi_value* argv, napi_value* result)
-	var status = C.napi_ok
+	var args = unsafe.Pointer(&arguments[0])
+	// defer C.free(args)
+	var status = C.napi_call_function(env, receiver, function, C.size_t(len(arguments)), (*C.napi_value)(args), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
