@@ -1832,9 +1832,10 @@ func NapiDeleteElement(env NapiEnv, object NapiValue, index uint) (bool, NapiSta
 // [in] property_count: The number of elements in the properties array.
 // [in] properties: The array of property descriptors.
 // N-API version: 1
-func NapiDefineProperties(env NapiEnv) NapiStatus {
-	// TODO  napi_define_properties(napi_env env, napi_value object, size_t property_count, const napi_property_descriptor* properties);
-	var status = C.napi_ok
+func NapiDefineProperties(env NapiEnv, value NapiValue, properties []NapiPropertyDescriptor) NapiStatus {
+	var props = (unsafe.Pointer(&properties[0]))
+	//defer C.free(props)
+	var status = C.napi_define_properties(env, value, C.size_t(len(properties)), (*C.napi_property_descriptor)(props))
 	return NapiStatus(status)
 }
 
@@ -2332,7 +2333,9 @@ func Initialize(env NapiEnv, exports NapiValue) C.napi_value {
 		attributes: C.napi_default,
 		data:       nil,
 	}
-	C.napi_define_properties(env, exports, 1, (*C.napi_property_descriptor)(&desc))
+	//C.napi_define_properties(env, exports, 1, (*C.napi_property_descriptor)(&desc))
+	props := []NapiPropertyDescriptor{desc}
+	NapiDefineProperties(env, exports, props)
 	return (C.napi_value)(exports)
 }
 
