@@ -1937,10 +1937,11 @@ func NapiGetNewTarget(env NapiEnv, cbinfo NapiCallbackInfo) (NapiValue, NapiStat
 // [out] result: napi_value representing the JavaScript object returned, which in
 // this case is the constructed object.
 // N-API version: 1
-func NapiNewInstance(env NapiEnv) (NapiValue, NapiStatus) {
+func NapiNewInstance(env NapiEnv, ctor NapiValue, arguments []NapiValue) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	// TODO napi_new_instance(napi_env env, napi_value cons, size_t argc, napi_value* argv, napi_value* result)
-	var status = C.napi_ok
+	var args = unsafe.Pointer(&arguments[0])
+	// defer C.free(args)
+	var status = C.napi_new_instance(env, ctor, C.size_t(len(arguments)), (*C.napi_value)(args), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
