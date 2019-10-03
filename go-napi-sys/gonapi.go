@@ -1995,10 +1995,12 @@ func NapiNewInstance(env NapiEnv, ctor NapiValue, arguments []NapiValue) (NapiVa
 // parameter) and freed whenever the class is garbage-collected by passing both
 // the JavaScript function and the data to NapiAddFinalizer.
 // N-API version: 1
-func NapiDefineClass(env NapiEnv) (NapiValue, NapiStatus) {
+func NapiDefineClass(env NapiEnv, name string, ctor NapiCallback, properties []NapiPropertyDescriptor) (NapiValue, NapiStatus) {
 	var res C.napi_value
-	// TODO napi_define_class(napi_env env, const char* utf8name, size_t length, napi_callback constructor, void* data, size_t property_count, const napi_property_descriptor* properties, napi_value* result);
-	var status = C.napi_ok
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	props := unsafe.Pointer(&properties[0])
+	var status = C.napi_define_class(env, cname, C.NAPI_AUTO_LENGTH, ctor, nil, C.size_t(len(properties)), (*C.napi_property_descriptor)(props), &res)
 	return NapiValue(res), NapiStatus(status)
 }
 
