@@ -2051,7 +2051,7 @@ func NapiWrap(env NapiEnv, value NapiValue, native unsafe.Pointer) (NapiRef, Nap
 func NapiUnwrap(env NapiEnv, value NapiValue) (unsafe.Pointer, NapiStatus) {
 	var res unsafe.Pointer
 	// napi_remove_wrap(napi_env env, napi_value js_object, void** result)
-	var status = C.napi_remove_wrap(env, value, &res)
+	var status = C.napi_unwrap(env, value, &res)
 	return res, NapiStatus(status)
 }
 
@@ -2063,11 +2063,11 @@ func NapiUnwrap(env NapiEnv, value NapiValue) (unsafe.Pointer, NapiStatus) {
 // [in] js_object: The object associated with the native instance.
 // [out] result: Pointer to the wrapped native instance.
 // N-API version: 1
-func NapiRemoveWrap(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
+func NapiRemoveWrap(env NapiEnv, value NapiValue) (unsafe.Pointer, NapiStatus) {
+	var res unsafe.Pointer
 	// TODO napi_remove_wrap(napi_env env, napi_value js_object, void** result)s
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+	var status = C.napi_remove_wrap(env, value, &res)
+	return res, NapiStatus(status)
 }
 
 // NapiAddFinalizer function adds a NapiFinalize callback which will be called
