@@ -2030,11 +2030,11 @@ func NapiDefineClass(env NapiEnv, name string, ctor NapiCallback, properties []N
 // a reference count of 0. Typically this reference count would be incremented
 // temporarily during async operations that require the instance to remain valid.
 // N-API version: 1
-func NapiWrap(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
+func NapiWrap(env NapiEnv, value NapiValue, native unsafe.Pointer) (NapiRef, NapiStatus) {
+	var res C.napi_ref
 	// TODO napi_wrap(napi_env env, napi_value js_object, void* native_object, napi_finalize finalize_cb, void* finalize_hint, napi_ref* result);
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+	var status = C.napi_wrap(env, value, native, nil, nil, &res)
+	return NapiRef(res), NapiStatus(status)
 }
 
 // NapiUnwrap function retrieves a native instance that was previously wrapped
