@@ -2048,11 +2048,11 @@ func NapiWrap(env NapiEnv, value NapiValue, native unsafe.Pointer) (NapiRef, Nap
 // object; the wrapped C++ instance that is the target of the call can be
 // obtained then by calling NapiUnwrap() on the wrapper object.
 // N-API version: 1
-func NapiUnwrap(env NapiEnv) (NapiValue, NapiStatus) {
-	var res C.napi_value
+func NapiUnwrap(env NapiEnv, value NapiValue) (unsafe.Pointer, NapiStatus) {
+	var res unsafe.Pointer
 	// napi_remove_wrap(napi_env env, napi_value js_object, void** result)
-	var status = C.napi_ok
-	return NapiValue(res), NapiStatus(status)
+	var status = C.napi_remove_wrap(env, value, &res)
+	return res, NapiStatus(status)
 }
 
 // NapiRemoveWrap function retrieves a native instance that was previously
