@@ -12,24 +12,28 @@ napi_get_last_error_info(
 }
 
 // Getters for defined singletons
+
 NAPI_EXTERN napi_status 
 napi_get_undefined(
     napi_env env, 
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_null(
     napi_env env, 
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_global(
     napi_env env, 
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_boolean(
     napi_env env, 
@@ -39,18 +43,21 @@ napi_get_boolean(
 }
 
 // Methods to create Primitive types/Objects
+
 NAPI_EXTERN napi_status 
 napi_create_object(
     napi_env env, 
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_array(
     napi_env env, 
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_array_with_length(
     napi_env env, 
@@ -58,6 +65,7 @@ napi_create_array_with_length(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_double(
     napi_env env, 
@@ -65,6 +73,7 @@ napi_create_double(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_int32(
     napi_env env, 
@@ -72,6 +81,7 @@ napi_create_int32(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_uint32(
     napi_env env, 
@@ -79,6 +89,7 @@ napi_create_uint32(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_int64(
     napi_env env, 
@@ -86,6 +97,7 @@ napi_create_int64(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_string_latin1(
     napi_env env, 
@@ -94,6 +106,7 @@ napi_create_string_latin1(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_string_utf8(
     napi_env env, 
@@ -102,6 +115,7 @@ napi_create_string_utf8(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_string_utf16(
     napi_env env, 
@@ -110,6 +124,7 @@ napi_create_string_utf16(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_symbol(
     napi_env env, 
@@ -117,6 +132,7 @@ napi_create_symbol(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_function(
     napi_env env, 
@@ -126,6 +142,7 @@ napi_create_function(
     void* data, napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_error(
     napi_env env, 
@@ -134,6 +151,7 @@ napi_create_error(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_type_error(
     napi_env env, 
@@ -142,6 +160,7 @@ napi_create_type_error(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_range_error(
     napi_env env, 
@@ -152,6 +171,7 @@ napi_create_range_error(
 }
 
 // Methods to get the native napi_value from Primitive type
+
 NAPI_EXTERN napi_status 
 napi_typeof(
     napi_env env, 
@@ -159,6 +179,7 @@ napi_typeof(
     napi_valuetype* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_value_double(
     napi_env env, 
@@ -166,6 +187,7 @@ napi_get_value_double(
     double* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_value_int32(
     napi_env env, 
@@ -173,6 +195,7 @@ napi_get_value_int32(
     int32_t* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_value_uint32(
     napi_env env, 
@@ -180,6 +203,7 @@ napi_get_value_uint32(
     uint32_t* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_value_int64(
     napi_env env, 
@@ -187,6 +211,7 @@ napi_get_value_int64(
     int64_t* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_value_bool(
     napi_env env,
@@ -230,6 +255,7 @@ napi_get_value_string_utf16(
 
 // Methods to coerce values
 // These APIs may execute user scripts
+
 NAPI_EXTERN napi_status 
 napi_coerce_to_bool(
     napi_env env,
@@ -237,13 +263,15 @@ napi_coerce_to_bool(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_coerce_to_number(
     napi_env env,
     napi_value value,
     napi_value* result) {
         return napi_ok;
-    }
+}
+
 NAPI_EXTERN napi_status 
 napi_coerce_to_object(
     napi_env env,
@@ -251,6 +279,7 @@ napi_coerce_to_object(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_coerce_to_string(
     napi_env env,
@@ -260,6 +289,7 @@ napi_coerce_to_string(
 }
 
 // Methods to work with Objects
+
 NAPI_EXTERN napi_status 
 napi_get_prototype(
     napi_env env,
@@ -267,6 +297,7 @@ napi_get_prototype(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_property_names(
     napi_env env,
@@ -274,6 +305,7 @@ napi_get_property_names(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_set_property(
     napi_env env,
@@ -282,6 +314,7 @@ napi_set_property(
     napi_value value) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_has_property(
     napi_env env,
@@ -290,6 +323,7 @@ napi_has_property(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_property(
     napi_env env,
@@ -298,6 +332,7 @@ napi_get_property(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_delete_property(
     napi_env env,
@@ -306,6 +341,7 @@ napi_delete_property(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_has_own_property(
     napi_env env,
@@ -314,6 +350,7 @@ napi_has_own_property(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_set_named_property(
     napi_env env,
@@ -322,6 +359,7 @@ napi_set_named_property(
     napi_value value) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_has_named_property(
     napi_env env,
@@ -330,6 +368,7 @@ napi_has_named_property(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_named_property(
     napi_env env,
@@ -338,6 +377,7 @@ napi_get_named_property(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_set_element(
     napi_env env,
@@ -346,6 +386,7 @@ napi_set_element(
     napi_value value) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_has_element(
     napi_env env,
@@ -362,6 +403,7 @@ napi_get_element(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_delete_element(
     napi_env env,
@@ -370,6 +412,7 @@ napi_delete_element(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status
 napi_define_properties(
     napi_env env,
@@ -380,6 +423,7 @@ napi_define_properties(
 }
 
 // Methods to work with Arrays
+
 NAPI_EXTERN napi_status 
 napi_is_array(
     napi_env env,
@@ -387,6 +431,7 @@ napi_is_array(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_array_length(
     napi_env env,
@@ -396,6 +441,7 @@ napi_get_array_length(
 }
 
 // Methods to compare values
+
 NAPI_EXTERN napi_status 
 napi_strict_equals(
     napi_env env,
@@ -406,6 +452,7 @@ napi_strict_equals(
 }
 
 // Methods to work with Functions
+
 NAPI_EXTERN napi_status 
 napi_call_function(
     napi_env env,
@@ -416,6 +463,7 @@ napi_call_function(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_new_instance(
     napi_env env,
@@ -425,6 +473,7 @@ napi_new_instance(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_instanceof(
     napi_env env,
@@ -455,6 +504,7 @@ napi_get_new_target(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status
 napi_define_class(
     napi_env env,
@@ -469,6 +519,7 @@ napi_define_class(
 }
 
 // Methods to work with external data objects
+
 NAPI_EXTERN napi_status 
 napi_wrap(
     napi_env env,
@@ -479,6 +530,7 @@ napi_wrap(
     napi_ref* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_unwrap(
     napi_env env,
@@ -486,6 +538,7 @@ napi_unwrap(
     void** result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_remove_wrap(
     napi_env env,
@@ -493,6 +546,7 @@ napi_remove_wrap(
     void** result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_external(
     napi_env env,
@@ -502,6 +556,7 @@ napi_create_external(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_value_external(
     napi_env env,
@@ -571,24 +626,27 @@ napi_open_handle_scope(
     napi_handle_scope* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_close_handle_scope(
     napi_env env,
     napi_handle_scope scope) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status
 napi_open_escapable_handle_scope(
     napi_env env,
     napi_escapable_handle_scope* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status
 napi_close_escapable_handle_scope(
     napi_env env,
     napi_escapable_handle_scope scope) {
         return napi_ok;
-    }
+}
 
 NAPI_EXTERN napi_status 
 napi_escape_handle(
@@ -600,19 +658,22 @@ napi_escape_handle(
 }
 
 // Methods to support error handling
+
 NAPI_EXTERN napi_status 
 napi_throw(
     napi_env env, 
     napi_value error) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_throw_error(
     napi_env env,
     const char* code,
     const char* msg) {
         return napi_ok;
-    }
+}
+
 NAPI_EXTERN napi_status 
 napi_throw_type_error(
     napi_env env,
@@ -620,6 +681,7 @@ napi_throw_type_error(
     const char* msg) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_throw_range_error(
     napi_env env,
@@ -627,6 +689,7 @@ napi_throw_range_error(
     const char* msg) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_is_error(
     napi_env env,
@@ -636,12 +699,14 @@ napi_is_error(
 }
 
 // Methods to support catching exceptions
+
 NAPI_EXTERN napi_status 
 napi_is_exception_pending(
     napi_env env, 
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_and_clear_last_exception(
     napi_env env,
@@ -657,6 +722,7 @@ napi_is_arraybuffer(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_arraybuffer(
     napi_env env,
@@ -665,6 +731,7 @@ napi_create_arraybuffer(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status
 napi_create_external_arraybuffer(
     napi_env env,
@@ -675,6 +742,7 @@ napi_create_external_arraybuffer(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_arraybuffer_info(
     napi_env env,
@@ -683,6 +751,7 @@ napi_get_arraybuffer_info(
     size_t* byte_length) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_is_typedarray(
     napi_env env,
@@ -690,6 +759,7 @@ napi_is_typedarray(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_typedarray(
     napi_env env,
@@ -700,6 +770,7 @@ napi_create_typedarray(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_typedarray_info(
     napi_env env,
@@ -721,6 +792,7 @@ napi_create_dataview(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_is_dataview(
     napi_env env,
@@ -728,6 +800,7 @@ napi_is_dataview(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_dataview_info(
     napi_env env,
@@ -739,7 +812,8 @@ napi_get_dataview_info(
         return napi_ok;
 }
 
-// version management
+// Version management
+
 NAPI_EXTERN napi_status 
 napi_get_version(
     napi_env env, 
@@ -755,6 +829,7 @@ napi_get_node_version(
 }
 
 // Promises
+
 NAPI_EXTERN napi_status 
 napi_create_promise(
     napi_env env,
@@ -762,6 +837,7 @@ napi_create_promise(
     napi_value* promise) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_resolve_deferred(
     napi_env env,
@@ -769,6 +845,7 @@ napi_resolve_deferred(
     napi_value resolution) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_reject_deferred(
     napi_env env,
@@ -776,6 +853,7 @@ napi_reject_deferred(
     napi_value rejection) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_is_promise(
     napi_env env,
@@ -802,9 +880,10 @@ napi_adjust_external_memory(
         return napi_ok;
 }
 
-#ifdef NAPI_EXPERIMENTAL
+#if NAPI_VERSION >= 5
 
 // Dates
+
 NAPI_EXTERN napi_status 
 napi_create_date(
     napi_env env,
@@ -828,6 +907,21 @@ napi_get_date_value(
     double* result) {
         return napi_ok;
 }
+
+NAPI_EXTERN napi_status 
+napi_add_finalizer(
+    napi_env env,
+    napi_value js_object,
+    void* native_object,
+    napi_finalize finalize_cb,
+    void* finalize_hint,
+    napi_ref* result) {
+        return napi_ok;
+}
+
+#endif // NAPI_VERSION >= 5
+
+#ifdef NAPI_EXPERIMENTAL
 
 NAPI_EXTERN napi_status 
 napi_create_bigint_int64(
@@ -883,23 +977,30 @@ napi_get_value_bigint_words(
         return napi_ok;
 }
 
+// Instance data
 NAPI_EXTERN napi_status 
-napi_add_finalizer(
+napi_set_instance_data(
     napi_env env,
-    napi_value js_object,
-    void* native_object,
+    void* data,
     napi_finalize finalize_cb,
-    void* finalize_hint,
-    napi_ref* result) {
+    void* finalize_hint) {
         return napi_ok;
 }
+
+NAPI_EXTERN napi_status 
+napi_get_instance_data(
+    napi_env env,
+    void** data) {
+        return napi_ok;
+}
+
 #endif  // NAPI_EXPERIMENTAL
 
 // ##############################################################################
 // Stub for runtime API
 // ##############################################################################
 
-void exit()  __attribute__((noreturn));;
+void exit()  __attribute__((noreturn));
     
 NAPI_EXTERN NAPI_NO_RETURN 
 void napi_fatal_error(
@@ -908,9 +1009,10 @@ void napi_fatal_error(
     const char* message,
     size_t message_len) {
         exit(0);
-    }
+}
 
 // Methods for custom handling of async operations
+
 NAPI_EXTERN napi_status 
 napi_async_init(
     napi_env env,
@@ -940,6 +1042,7 @@ napi_make_callback(
 }
 
 // Methods to provide node::Buffer functionality with napi types
+
 NAPI_EXTERN napi_status 
 napi_create_buffer(
     napi_env env,
@@ -948,6 +1051,7 @@ napi_create_buffer(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_external_buffer(
     napi_env env,
@@ -958,6 +1062,7 @@ napi_create_external_buffer(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_create_buffer_copy(
     napi_env env,
@@ -967,6 +1072,7 @@ napi_create_buffer_copy(
     napi_value* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_is_buffer(
     napi_env env,
@@ -974,6 +1080,7 @@ napi_is_buffer(
     bool* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_get_buffer_info(
     napi_env env,
@@ -984,6 +1091,7 @@ napi_get_buffer_info(
 }
 
 // Methods to manage simple async operations
+
 NAPI_EXTERN napi_status 
 napi_create_async_work(
     napi_env env,
@@ -995,18 +1103,21 @@ napi_create_async_work(
     napi_async_work* result) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_delete_async_work(
     napi_env env,
     napi_async_work work) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_queue_async_work(
     napi_env env,
     napi_async_work work) {
         return napi_ok;
 }
+
 NAPI_EXTERN napi_status 
 napi_cancel_async_work(
     napi_env env,
