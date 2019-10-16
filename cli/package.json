@@ -1,0 +1,28 @@
+{
+    "name": "go-napi-sys",
+    "version": "0.0.1",
+    "description": "Build and load native modules using Golang.",
+    "author": "Nicola Del Gobbo <nicoladelgobbo@gmail.com>",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/napi-bindings/go-napi-sys.git"
+    },
+    "main": "./index.js",
+    "bin": {
+      "napisys": "./bin/cli.js"
+    },
+    "license": "Apache-2.0",
+    "dependencies": {
+    },
+    "devDependencies": {  
+    },
+    "scripts": {
+    },
+    "bugs": {
+      "url": "https://github.com/napi-bindings/go-napi-sys/issues"
+    },
+    "homepage": "https://napi-bindings.dev",
+    "engines": {
+      "node": ">=10"
+    }
+  }

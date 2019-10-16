@@ -1,4 +1,4 @@
-package main
+package napisys
 
 /*
 #cgo CXXFLAGS: -std=c++11

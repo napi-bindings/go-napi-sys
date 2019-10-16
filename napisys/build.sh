@@ -20,7 +20,7 @@ echo Start building ... && \
 # Remember for Node.js version less than 12 the MACOSX_DEPLOYMENT_TARGET need to 
 # be set to 10.7
 export MACOSX_DEPLOYMENT_TARGET=10.10 && \
-export GOPATH=$(pwd) && \
+# export GOPATH=$(pwd) && \
 go build -a -x -o libgoaddon.a -buildmode=c-archive . && \
 echo Build finished.
 

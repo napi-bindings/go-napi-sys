@@ -5,10 +5,9 @@
   "main": "hello.js",
   "private": true,
   "dependencies": {
-    "bindings": "~1.2.1"
+    "bindings": "*"
   },
   "scripts": {
-    "preinstall": "cp ../go-napi-sys/libgoaddon.h libgoaddon.h && cp ../go-napi-sys/libgoaddon.a libgoaddon.a",
     "install": "node-gyp rebuild",
     "test": "node index.js"
   },
