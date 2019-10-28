@@ -10,12 +10,12 @@ rm -rf *.*
 cd .. && \
 echo Adding libraries ... && \
 mkdir lib && \
-cp ../napi-stub/libnode_api.a lib/libnode_api.a && \
+cp ../../../napi-stub/libnode_api.a lib/libnode_api.a && \
 echo Adding includes ... && \
-cp ../napi-stub/js_native_api_types.h include/js_native_api_types.h && \
-cp ../napi-stub/js_native_api.h include/js_native_api.h && \
-cp ../napi-stub/node_api_types.h include/node_api_types.h && \
-cp ../napi-stub/node_api.h include/node_api.h && \
+cp ../../../napi-stub/js_native_api_types.h include/js_native_api_types.h && \
+cp ../../../napi-stub/js_native_api.h include/js_native_api.h && \
+cp ../../../napi-stub/node_api_types.h include/node_api_types.h && \
+cp ../../../napi-stub/node_api.h include/node_api.h && \
 echo Start building ... && \
 # Remember for Node.js version less than 12 the MACOSX_DEPLOYMENT_TARGET need to 
 # be set to 10.7

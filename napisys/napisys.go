@@ -1,4 +1,4 @@
-package napisys
+package main
 
 /*
 #cgo CXXFLAGS: -std=c++11
@@ -123,8 +123,7 @@ var PropertyAttributes = &propertyAttributes{
 	Static:       C.napi_static,
 }
 
-// This is a struct used as container for types of NapiValue.
-// NapiValueType describes the type of NapiValue. This generally corresponds to
+// ValueType describes the type of NapiValue. This generally corresponds to
 // the types described in Section 6.1 of the ECMAScript Language Specification.
 // In addition to types in that section, NapiValueType can also represent
 // Functions and Objects with external data.
@@ -141,7 +140,7 @@ var PropertyAttributes = &propertyAttributes{
 //  napi_function,
 //  napi_external,
 //  napi_bigint,
-// type ValueType C.napi_valuetype
+type ValueType = C.napi_valuetype
 type valueTypes struct {
 	// ES6 types (corresponds to typeof)
 	Undefined int
@@ -324,22 +323,7 @@ type Finalize = C.napi_finalize
 
 // PropertyDescriptor is a data structure that used to define the properties
 // of a JavaScript object.
-type PropertyDescriptor struct {
-	prop C.napi_property_descriptor
-}
-
-// New method return the new property descriptor for
-/* func (pd *PropertyDescriptor) New() {
-	pd.prop = C.napi_property_descriptor{
-			utf8name:   name,
-			name:       nil,
-			method:     nil, //(C.napi_callback)(C.CallbackMethod(unsafe.Pointer(caller))), //nil,
-			getter:     nil,
-			setter:     nil,
-			value:      nil,
-			attributes: napisys.PropertyAttributes.NapiDefault,
-			data:       nil,
-}*/
+type PropertyDescriptor = C.napi_property_descriptor
 
 // ExtendedErrorInfo contains additional information about a failed status
 // happened on an N-API call.
@@ -1017,7 +1001,7 @@ func CreateExternalBuffer(env Env, length uint, raw unsafe.Pointer) (Value, Stat
 // [out] result: A napi_value representing a JavaScript Object.
 // Returns napi_ok if the API succeeded.
 // N-API version: 1
-func CreateObject(env NapiEnv) (NapiValue, NapiStatus) {
+func CreateObject(env Env) (Value, Status) {
 	var res C.napi_value
 	var status = C.napi_create_object(env, &res)
 	return Value(res), Status(status)
@@ -1033,7 +1017,7 @@ func CreateObject(env NapiEnv) (NapiValue, NapiStatus) {
 // [out] result: A napi_value representing a JavaScript Symbol.
 // Returns napi_ok if the API succeeded.
 // N-API version: 1
-func CreateSymbol(env NapiEnv, value NapiValue) (NapiValue, NapiStatus) {
+func CreateSymbol(env Env, value Value) (Value, Status) {
 	var res C.napi_value
 	var status = C.napi_create_symbol(env, value, &res)
 	return Value(res), Status(status)
@@ -2322,3 +2306,33 @@ func ExecuteCallback(data unsafe.Pointer, env C.napi_env, info C.napi_callback_i
 	caller := (*Caller)(data)
 	return (C.napi_value)(caller.cb(Env(env), CallbackInfo(info)))
 }
+
+func createInt32(env Env, info CallbackInfo) Value {
+	value, _ := CreateInt32(Env(env), 7)
+	return value
+}
+
+//export Initialize
+func Initialize(env Env, exports Value) C.napi_value {
+	name := C.CString("createInt32")
+	defer C.free(unsafe.Pointer(name))
+	caller := &Caller{
+		cb: createInt32,
+	}
+	desc := PropertyDescriptor{
+		utf8name:   name,
+		name:       nil,
+		method:     (C.napi_callback)(C.CallbackMethod(unsafe.Pointer(caller))), //nil,
+		getter:     nil,
+		setter:     nil,
+		value:      nil,
+		attributes: C.napi_default,
+		data:       nil,
+	}
+	//C.napi_define_properties(env, exports, 1, (*C.napi_property_descriptor)(&desc))
+	props := []PropertyDescriptor{desc}
+	DefineProperties(env, exports, props)
+	return (C.napi_value)(exports)
+}
+
+func main(){}

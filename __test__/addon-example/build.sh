@@ -1,9 +1,9 @@
-echo Cleaning previous build ... && \
-rm -rf libgoaddon.a && \
-rm -rf libgoaddon.h && \
-rm -rf ./build && \
-rm -rf ./napisys && \
-cp -r ../../napisys ./napisys #&& \
+#echo Cleaning previous build ... && \
+#rm -rf libgoaddon.a && \
+#rm -rf libgoaddon.h && \
+#rm -rf ./build && \
+#rm -rf ./napisys && \
+#cp -r ../../napisys ./napisys #&& \
 
 
 

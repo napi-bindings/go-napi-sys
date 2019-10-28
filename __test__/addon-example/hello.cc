@@ -22,4 +22,9 @@
   return exports;
 }*/
 
-NAPI_MODULE(NODE_GYP_MODULE_NAME, Initialize)
+napi_value Init(napi_env env, napi_value  exports) {
+  return (napi_value) Initialize((void*) env, (void*) exports);
+  //return Initialize(env, exports);
+}
+
+NAPI_MODULE(NODE_GYP_MODULE_NAME, Init)
