@@ -1,4 +1,4 @@
-package main
+package napisys
 
 /*
 #cgo CXXFLAGS: -std=c++11
@@ -2298,41 +2298,39 @@ type CCallback func(Env, CallbackInfo) Value
 
 // Caller contains a callback to call
 type Caller struct {
-	cb CCallback
+	Cb CCallback
 }
 
 //export ExecuteCallback
 func ExecuteCallback(data unsafe.Pointer, env C.napi_env, info C.napi_callback_info) C.napi_value {
 	caller := (*Caller)(data)
-	return (C.napi_value)(caller.cb(Env(env), CallbackInfo(info)))
+	return (C.napi_value)(caller.Cb(Env(env), CallbackInfo(info)))
 }
 
-func createInt32(env Env, info CallbackInfo) Value {
-	value, _ := CreateInt32(Env(env), 7)
-	return value
+// Property ...
+type Property struct {
+	Name   string
+	Method *Caller
 }
 
-//export Initialize
-func Initialize(env Env, exports Value) C.napi_value {
-	name := C.CString("createInt32")
+// GetRaw ...
+func (prop *Property) GetRaw() PropertyDescriptor {
+	name := C.CString(prop.Name)
 	defer C.free(unsafe.Pointer(name))
-	caller := &Caller{
-		cb: createInt32,
-	}
 	desc := PropertyDescriptor{
 		utf8name:   name,
 		name:       nil,
-		method:     (C.napi_callback)(C.CallbackMethod(unsafe.Pointer(caller))), //nil,
+		method:     (Callback)(C.CallbackMethod(unsafe.Pointer(prop.Method))), //nil,
 		getter:     nil,
 		setter:     nil,
 		value:      nil,
 		attributes: C.napi_default,
 		data:       nil,
 	}
-	//C.napi_define_properties(env, exports, 1, (*C.napi_property_descriptor)(&desc))
-	props := []PropertyDescriptor{desc}
-	DefineProperties(env, exports, props)
-	return (C.napi_value)(exports)
+	return desc
 }
 
-func main(){}
+/*func createInt32(env Env, info CallbackInfo) Value {
+	value, _ := CreateInt32(Env(env), 7)
+	return value
+}*/
