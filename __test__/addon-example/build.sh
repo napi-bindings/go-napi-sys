@@ -14,4 +14,9 @@ npm install && \
 echo Build finished. && \
 echo Test ...
 npm test && \
-echo Test executed with success.
+echo Test executed with success. && \
+echo Cleaning ...
+rm -rf libgoaddon.a && \
+rm -rf libgoaddon.h && \
+rm -rf hello.cc && \
+echo Build and test successfully executed.
