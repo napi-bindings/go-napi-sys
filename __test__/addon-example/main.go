@@ -11,7 +11,7 @@ func createInt32(env napisys.Env, info napisys.CallbackInfo) napisys.Value {
 	return value
 }
 
-//export Initialize function represents the entry point for the addon.
+//export Initialize function represents the entry point for the addon
 func Initialize(env unsafe.Pointer, exports unsafe.Pointer) unsafe.Pointer {
 	caller := &napisys.Caller{
 		Cb: createInt32,
@@ -22,7 +22,7 @@ func Initialize(env unsafe.Pointer, exports unsafe.Pointer) unsafe.Pointer {
 	}
 	props := []napisys.PropertyDescriptor{desc.GetRaw()}
 	napisys.DefineProperties((napisys.Env)(env), (napisys.Value)(exports), props)
-	return /*(C.napi_value)*/ (exports)
+	return exports
 }
 
 func main() {}
