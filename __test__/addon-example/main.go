@@ -20,7 +20,7 @@ func Initialize(env unsafe.Pointer, exports unsafe.Pointer) unsafe.Pointer {
 		Name:   "createInt32",
 		Method: caller,
 	}
-	props := []napisys.PropertyDescriptor{desc.GetRaw()}
+	props := []napisys.Property{desc}
 	napisys.DefineProperties((napisys.Env)(env), (napisys.Value)(exports), props)
 	return exports
 }

@@ -1829,8 +1829,13 @@ func DeleteElement(env Env, object Value, index uint) (bool, Status) {
 // [in] property_count: The number of elements in the properties array.
 // [in] properties: The array of property descriptors.
 // N-API version: 1
-func DefineProperties(env Env, value Value, properties []PropertyDescriptor) Status {
-	var props = (unsafe.Pointer(&properties[0]))
+func DefineProperties(env Env, value Value, properties []Property) Status {
+	raw := make([]PropertyDescriptor, len(properties))
+	for i := range properties {
+		prop := properties[i].getRaw()
+		raw[i] = prop
+	}
+	var props = (unsafe.Pointer(&raw[0]))
 	//defer C.free(props)
 	var status = C.napi_define_properties(env, value, C.size_t(len(properties)), (*C.napi_property_descriptor)(props))
 	return Status(status)
@@ -2314,7 +2319,7 @@ type Property struct {
 }
 
 // GetRaw ...
-func (prop *Property) GetRaw() PropertyDescriptor {
+func (prop *Property) getRaw() PropertyDescriptor {
 	name := C.CString(prop.Name)
 	defer C.free(unsafe.Pointer(name))
 	desc := PropertyDescriptor{
