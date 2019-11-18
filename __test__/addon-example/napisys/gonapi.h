@@ -7,7 +7,9 @@
 extern "C" {
 #endif
 
-extern napi_callback CallbackMethod(void* caller);
+extern napi_callback Callback(void* caller);
+extern napi_async_execute_callback AsyncExecuteCallback(void* caller);
+extern napi_async_complete_callback AsyncCompleteCallback(void* caller);
 
 #ifdef __cplusplus
 }  // extern "C"
