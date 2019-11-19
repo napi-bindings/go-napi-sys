@@ -206,10 +206,10 @@ var TypedArrayTypes = &typedArrayTypes{
 	BigUInt64Array:    C.napi_biguint64_array,
 }
 
-// NapiTypedArrayType represents the underlying binary scalar datatype of the
+// TypedArrayType represents the underlying binary scalar datatype of the
 // TypedArray defined in sectiontion 22.2 of the ECMAScript Language
 // Specification.
-type NapiTypedArrayType C.napi_typedarray_type
+type TypedArrayType C.napi_typedarray_type
 
 // This is a struct used as container for N-API status.
 type statuses struct {
@@ -1042,7 +1042,7 @@ func CreateSymbol(env Env, value Value) (Value, Status) {
 // JavaScript TypedArray objects are described in Section 22.2 of the ECMAScript
 // Language Specification.
 // N-API version: 1
-func CreateTypedArray(env Env, arrayType NapiTypedArrayType, lenght uint, value Value, offset uint) (Value, Status) {
+func CreateTypedArray(env Env, arrayType TypedArrayType, lenght uint, value Value, offset uint) (Value, Status) {
 	var res C.napi_value
 	var status = C.napi_create_typedarray(env, (C.napi_typedarray_type)(arrayType), C.size_t(lenght), (C.napi_value)(value), C.size_t(offset), &res)
 	return Value(res), Status(status)
@@ -1260,14 +1260,14 @@ func GetPrototype(env Env, object Value) (Value, Status) {
 // Warning: Use caution while using this API since the underlying data buffer is
 // managed by the VM.
 // N-API version: 1
-func GetTypedArrayInfo(env Env, value Value) (Value, NapiTypedArrayType, uint, unsafe.Pointer, uint, Status) {
+func GetTypedArrayInfo(env Env, value Value) (Value, TypedArrayType, uint, unsafe.Pointer, uint, Status) {
 	var arrayType C.napi_typedarray_type
 	var length C.size_t
 	var data unsafe.Pointer
 	var arraybuffer C.napi_value
 	var offset C.size_t
 	var status = C.napi_get_typedarray_info(env, value, &arrayType, &length, &data, &arraybuffer, &offset)
-	return Value(arraybuffer), NapiTypedArrayType(arrayType), uint(length), data, uint(offset), Status(status)
+	return Value(arraybuffer), TypedArrayType(arrayType), uint(length), data, uint(offset), Status(status)
 }
 
 // GetDataviewInfo function eturns various properties of a DataView.
@@ -2430,9 +2430,17 @@ func GetThreadsafeFunctionContext(env Env) (Value, Status) {
 }
 
 // CallThreadsafeFunction function ...
-func CallThreadsafeFunction(env Env) Status {
-	//var res C.napi_value
-	var status = C.napi_ok
+// [in] fn: The asynchronous thread-safe JavaScript function to invoke.
+// [in] data: Data to send into JavaScript via the callback provided during the 
+// creation of the thread-safe JavaScript function.
+// [in] isBlocking: Flag whose value can be either NapiTsfnBlocking to indicate 
+// that the call should block if the queue is full or NapiTsfnNonBlocking to 
+// indicate that the call should return immediately with a status of 
+// QueueFull whenever the queue is full.
+// This function may be called from any thread which makes use of the thread-safe
+// function.
+func CallThreadsafeFunction(fn ThreadsafeFunction, data unsafe.Pointer, mode ThreadsafeFunctionCallMode) Status {
+	var status = C.napi_call_threadsafe_function(fn, data, mode)
 	return Status(status)
 }
 
