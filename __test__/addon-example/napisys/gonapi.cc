@@ -46,6 +46,17 @@ struct FinalizeCallbackWrap {
   void* data;
 };
 
+struct ThreadsafeFunctionCallbackWrap {
+  ThreadsafeFunctionCallbackWrap(void* data) : data{data} {}
+  napi_threadsafe_function_call_js operator()() {
+    static auto dataCopy = data;
+    return [](napi_env env, napi_value callback, void* ctx, void* data) -> void {
+        return CallThreadsafeFunctionCallback(dataCopy, env, callback, ctx, data);
+    };
+  }
+  void* data;
+};
+
 napi_callback Callback(void* caller) {
   CallbackWrap cb{caller};
   return cb();
@@ -64,5 +75,10 @@ napi_async_complete_callback AsyncCompleteCallback(void* caller) {
 
 napi_finalize FinalizeCallback(void* caller) {
   FinalizeCallbackWrap cb{caller};
+  return cb();
+}
+
+extern napi_threadsafe_function_call_js ThreadsafeFunctionCallback(void* caller) {
+  ThreadsafeFunctionCallbackWrap cb{caller};
   return cb();
 }

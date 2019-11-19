@@ -2416,10 +2416,29 @@ func GetUvEventLoop(env Env) (UVLoop, Status) {
 // an easy way to do this.
 
 // CreateThreadsafeFunction function ...
-func CreateThreadsafeFunction(env Env) (Value, Status) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return Value(res), Status(status)
+// [in] env: The environment that the API is invoked under.
+// [in] fn: An optional JavaScript function to call from another thread. It must 
+// be provided if nil is passed to call_js_cb.
+// [in] resource: An optional object associated with the async work that will be
+// passed to possible async hooks.
+// [in] maxQueueSize: Maximum size of the queue. 0 for no limit.
+// [in] initialThreadCount: The initial number of threads, including the main 
+// thread, which will be making use of this function.
+// [in] data: Optional data to be passed to finalize.
+// [in] finalizer: Optional function to call when the thread-safe function is 
+// being destroyed.
+// [in] context: Optional data to attach to the resulting thread-safe function.
+// [in] js: Optional callback which calls the JavaScript function in response to 
+// a call on a different thread. This callback will be called on the main thread. 
+// If not given, the JavaScript function will be called with no parameters and 
+// with undefined as its this value.
+// N-API version: 4
+func CreateThreadsafeFunction(env Env, fn Value, resource Value, name Value, maxQueueSize uint, initialThreadCount uint, data unsafe.Pointer, finalizer *FinalizeCaller, ctx unsafe.Pointer, tsfn *ThreadsafeFunctionsCaller) (ThreadsafeFunction, Status) {
+	var res C.napi_threadsafe_function
+	ctsfn := C.ThreadsafeFunctionCallback(unsafe.Pointer(tsfn))
+	cfinalize := C.FinalizeCallback(unsafe.Pointer(finalizer))
+	var status = C.napi_create_threadsafe_function(env ,fn, resource, name, C.size_t(maxQueueSize), C.size_t(initialThreadCount),  data, cfinalize, ctx, ctsfn, &res)
+	return ThreadsafeFunction(res), Status(status)
 }
 
 // GetThreadsafeFunctionContext function ...
@@ -2555,6 +2574,20 @@ type FinalizeCaller struct {
 func CallFinalizeCallback(wrap unsafe.Pointer, env C.napi_env, data unsafe.Pointer, hint unsafe.Pointer) {
 	caller := (*FinalizeCaller)(wrap)
 	caller.Cb(env, data, hint)	
+}
+
+// CThreadsafeFunctionsCallback  ...
+type CThreadsafeFunctionsCallback func(Env, Value, unsafe.Pointer, unsafe.Pointer)
+
+// ThreadsafeFunctionsCaller contains a callback to call
+type ThreadsafeFunctionsCaller struct {
+	Cb CThreadsafeFunctionsCallback
+}
+
+//export CallThreadsafeFunctionCallback
+func CallThreadsafeFunctionCallback(wrap unsafe.Pointer, env C.napi_env, fn C.napi_value , ctx unsafe.Pointer, data unsafe.Pointer) {
+	caller := (*ThreadsafeFunctionsCaller)(wrap)
+	caller.Cb(env, fn, ctx, data)	
 }
 
 // Property ...
