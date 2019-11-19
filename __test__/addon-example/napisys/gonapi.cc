@@ -35,6 +35,17 @@ struct AsyncCompleteCallbackWrap {
   void* data;
 };
 
+struct FinalizeCallbackWrap {
+  FinalizeCallbackWrap(void* data) : data{data} {}
+  napi_finalize operator()() {
+    static auto dataCopy = data;
+    return [](napi_env env, void* data, void* hint) -> void {
+        return CallFinalizeCallback(dataCopy, env, data, hint);
+    };
+  }
+  void* data;
+};
+
 napi_callback Callback(void* caller) {
   CallbackWrap cb{caller};
   return cb();
@@ -48,5 +59,10 @@ napi_async_execute_callback AsyncExecuteCallback(void* caller) {
 
 napi_async_complete_callback AsyncCompleteCallback(void* caller) {
   AsyncCompleteCallbackWrap cb{caller};
+  return cb();
+}
+
+napi_finalize FinalizeCallback(void* caller) {
+  FinalizeCallbackWrap cb{caller};
   return cb();
 }

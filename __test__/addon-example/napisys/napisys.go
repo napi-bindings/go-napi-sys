@@ -2098,11 +2098,11 @@ func RemoveWrap(env Env, value Value) (unsafe.Pointer, Status) {
 // Therefore, when obtaining a reference a finalize callback is also required in
 // order to enable correct disposal of the reference.
 // N-API version: 1
-func AddFinalizer(env Env) (Value, Status) {
-	var res C.napi_value
-	// TODO napi_add_finalizer(napi_env env, napi_value js_object, void* native_object, napi_finalize finalize_cb, void* finalize_hint, napi_ref* result)
-	var status = C.napi_ok
-	return Value(res), Status(status)
+func AddFinalizer(env Env, obj Value, native unsafe.Pointer, finalizer *FinalizeCaller, hint unsafe.Pointer) (Ref, Status) {
+	var res C.napi_ref
+	var fn = C.FinalizeCallback(unsafe.Pointer(finalizer))
+	var status = C.napi_add_finalizer(env, obj, native, fn, hint, &res)
+	return Ref(res), Status(status)
 }
 
 // Simple Asynchronous Operations
@@ -2405,6 +2405,16 @@ func GetUvEventLoop(env Env) (UVLoop, Status) {
 	return loop, Status(status)
 }
 
+// Asynchronous Thread-safe Function Calls
+// JavaScript functions can normally only be called from a native addon's main 
+// thread. If an addon creates additional threads, then N-API functions that 
+// require a Env, Value, or Ref must not be called from those threads.
+// When an addon has additional threads and JavaScript functions need to be 
+// invoked based on the processing completed by those threads, those threads must 
+// communicate with the addon's main thread so that the main thread can invoke 
+// the JavaScript function on their behalf. The thread-safe function APIs provide 
+// an easy way to do this.
+
 // CreateThreadsafeFunction function ...
 func CreateThreadsafeFunction(env Env) (Value, Status) {
 	var res C.napi_value
@@ -2517,6 +2527,20 @@ type AsyncCompleteCaller struct {
 func CallAsyncCompleteCallback(wrap unsafe.Pointer, env C.napi_env, status C.napi_status, data unsafe.Pointer) {
 	caller := (*AsyncCompleteCaller)(wrap)
 	caller.Cb(env, status, data)	
+}
+
+// CFinalizeCallback  ...
+type CFinalizeCallback func(Env, unsafe.Pointer, unsafe.Pointer)
+
+// FinalizeCaller contains a callback to call
+type FinalizeCaller struct {
+	Cb CFinalizeCallback
+}
+
+//export CallFinalizeCallback
+func CallFinalizeCallback(wrap unsafe.Pointer, env C.napi_env, data unsafe.Pointer, hint unsafe.Pointer) {
+	caller := (*FinalizeCaller)(wrap)
+	caller.Cb(env, data, hint)	
 }
 
 // Property ...
