@@ -2423,10 +2423,15 @@ func CreateThreadsafeFunction(env Env) (Value, Status) {
 }
 
 // GetThreadsafeFunctionContext function ...
-func GetThreadsafeFunctionContext(env Env) (Value, Status) {
-	var res C.napi_value
-	var status = C.napi_ok
-	return Value(res), Status(status)
+// [in] func: The thread-safe function for which to retrieve the context.
+// [out] result: The location where to store the context.
+// This API may be called from any thread which makes use of thread-safe 
+// function.
+// N-API version: 4
+func GetThreadsafeFunctionContext(fn ThreadsafeFunction) (unsafe.Pointer, Status) {
+	var res unsafe.Pointer
+	var status = C.napi_get_threadsafe_function_context(fn, &res)
+	return res, Status(status)
 }
 
 // CallThreadsafeFunction function ...
@@ -2439,6 +2444,7 @@ func GetThreadsafeFunctionContext(env Env) (Value, Status) {
 // QueueFull whenever the queue is full.
 // This function may be called from any thread which makes use of the thread-safe
 // function.
+// N-API version: 4
 func CallThreadsafeFunction(fn ThreadsafeFunction, data unsafe.Pointer, mode ThreadsafeFunctionCallMode) Status {
 	var status = C.napi_call_threadsafe_function(fn, data, mode)
 	return Status(status)
