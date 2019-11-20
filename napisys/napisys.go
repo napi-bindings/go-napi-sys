@@ -13,6 +13,7 @@ import "C"
 import (
 	"bytes"
 	"unsafe"
+	"reflect"
 )
 
 // ccstring function transforms a Go string into a C string (array of characters)
@@ -1839,7 +1840,6 @@ func DefineProperties(env Env, value Value, properties []Property) Status {
 		raw[i] = prop
 	}
 	var props = (unsafe.Pointer(&raw[0]))
-	//defer C.free(props)
 	var status = C.napi_define_properties(env, value, C.size_t(len(properties)), (*C.napi_property_descriptor)(props))
 	return Status(status)
 }
@@ -1874,7 +1874,6 @@ func DefineProperties(env Env, value Value, properties []Property) Status {
 func CallFunction(env Env, receiver Value, function Value, arguments []Value) (Value, Status) {
 	var res C.napi_value
 	var args = unsafe.Pointer(&arguments[0])
-	// defer C.free(args)
 	var status = C.napi_call_function(env, receiver, function, C.size_t(len(arguments)), (*C.napi_value)(args), &res)
 	return Value(res), Status(status)
 }
@@ -1896,8 +1895,6 @@ func CreateFunction(env Env, name string, cb Callback) (Value, Status) {
 	var res C.napi_value
 	var cname = C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	// TODO Determine how to append data to function.
-	// create_function(napi_env env, const char* utf8name, size_t length, napi_callback cb, void* data, napi_value* result);
 	var status = C.napi_create_function(env, cname, C.NAPI_AUTO_LENGTH, cb, nil, &res)
 	return Value(res), Status(status)
 }
@@ -1913,11 +1910,19 @@ func CreateFunction(env Env, name string, cb Callback) (Value, Status) {
 // [out] this: Receives the JavaScript this argument for the call.
 // [out] data: Receives the data pointer for the callback.
 // N-API version: 1
-func GetCbInfo(env Env, cbinfo CallbackInfo) (Value, Status) {
-	var res C.napi_value
-	// TODO napi_get_cb_info(napi_env env, napi_callback_info cbinfo, size_t* argc, napi_value* argv, napi_value* thisArg, void** data)
-	var status = C.napi_ok
-	return Value(res), Status(status)
+func GetCbInfo(env Env, cbinfo CallbackInfo) ([]Value, Value, unsafe.Pointer, Status) {
+	var argc C.size_t = 0
+	var argv *C.napi_value
+	var thisArg C.napi_value
+	var data unsafe.Pointer
+	var status = C.napi_get_cb_info(env, cbinfo, &argc, argv, &thisArg, &data)
+	//raw := C.GoBytes(unsafe.Pointer(argv), C.int(argc))
+	var params []Value
+	sliceHeader := (*reflect.SliceHeader)((unsafe.Pointer(&params)))
+	sliceHeader.Cap = int(argc)
+	sliceHeader.Len = int(argc)
+	sliceHeader.Data = uintptr(unsafe.Pointer(argv))
+	return params, Value(thisArg), data, Status(status)
 }
 
 // GetNewTarget function returns the new.target of the constructor call. If

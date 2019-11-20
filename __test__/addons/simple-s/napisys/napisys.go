@@ -13,6 +13,7 @@ import "C"
 import (
 	"bytes"
 	"unsafe"
+	"reflect"
 )
 
 // ccstring function transforms a Go string into a C string (array of characters)
@@ -1915,8 +1916,12 @@ func GetCbInfo(env Env, cbinfo CallbackInfo) ([]Value, Value, unsafe.Pointer, St
 	var thisArg C.napi_value
 	var data unsafe.Pointer
 	var status = C.napi_get_cb_info(env, cbinfo, &argc, argv, &thisArg, &data)
-	//params := make([]Value, argc)
-	params := (*[1 << 28]C.napi_value)(unsafe.Pointer(argv))[:argc:argc]
+	//raw := C.GoBytes(unsafe.Pointer(argv), C.int(argc))
+	var params []Value
+	sliceHeader := (*reflect.SliceHeader)((unsafe.Pointer(&params)))
+	sliceHeader.Cap = int(argc)
+	sliceHeader.Len = int(argc)
+	sliceHeader.Data = uintptr(unsafe.Pointer(argv))
 	return params, Value(thisArg), data, Status(status)
 }
 
