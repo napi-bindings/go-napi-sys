@@ -2,4 +2,4 @@
 
 const addon = require('bindings')('addon');
 
-console.log(addon.echo('Please give me back ...'));
+console.log(addon.add(2, 3));
