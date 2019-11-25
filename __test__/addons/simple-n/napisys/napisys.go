@@ -13,7 +13,6 @@ import "C"
 import (
 	"bytes"
 	"unsafe"
-	"reflect"
 )
 
 // ccstring function transforms a Go string into a C string (array of characters)
@@ -1911,18 +1910,25 @@ func CreateFunction(env Env, name string, cb Callback) (Value, Status) {
 // [out] data: Receives the data pointer for the callback.
 // N-API version: 1
 func GetCbInfo(env Env, cbinfo CallbackInfo) ([]Value, Value, unsafe.Pointer, Status) {
-	var argc C.size_t = 0
-	var argv *C.napi_value
+	var staticArgc C.size_t = 5
+	var argc = staticArgc
+	staticArgv := make([]Value, 5)
+	var dynamicArgv []Value
+	var cStaticArgv = (unsafe.Pointer(&staticArgv[0]))
 	var thisArg C.napi_value
 	var data unsafe.Pointer
-	var status = C.napi_get_cb_info(env, cbinfo, &argc, argv, &thisArg, &data)
-	//raw := C.GoBytes(unsafe.Pointer(argv), C.int(argc))
-	var params []Value
-	sliceHeader := (*reflect.SliceHeader)((unsafe.Pointer(&params)))
-	sliceHeader.Cap = int(argc)
-	sliceHeader.Len = int(argc)
-	sliceHeader.Data = uintptr(unsafe.Pointer(argv))
-	return params, Value(thisArg), data, Status(status)
+	var status = C.napi_get_cb_info(env, cbinfo, &argc, (*C.napi_value)(cStaticArgv), &thisArg, &data)
+	if argc > staticArgc {
+		dynamicArgv = make([]Value, int(argc))
+		var cDynamicArgv = (unsafe.Pointer(&dynamicArgv[0]))
+		var status = C.napi_get_cb_info(env, cbinfo, &argc, (*C.napi_value)(cDynamicArgv), nil, nil)
+		return dynamicArgv, Value(thisArg), data, Status(status)
+	}
+	arguments := make([]Value, int(argc))
+	for i := 0; i < int(argc); i++ {
+		arguments[i] = staticArgv[i]
+	}
+	return arguments, Value(thisArg), data, Status(status)
 }
 
 // GetNewTarget function returns the new.target of the constructor call. If
@@ -2111,9 +2117,9 @@ func AddFinalizer(env Env, obj Value, native unsafe.Pointer, finalizer *Finalize
 }
 
 // Simple Asynchronous Operations
-// Add-on modules often need to leverage asynchronous helpers from libuv as part 
+// Add-on modules often need to leverage asynchronous helpers from libuv as part
 // of their implementation. This allows them to schedule work to be executed
-// asynchronously so that their methods can return in advance of the working 
+// asynchronously so that their methods can return in advance of the working
 // being completed. This is important in order to allow them to avoid blocking
 // overall execution of the Node.js application.
 // N-API provides an ABI-stable interface for these supporting functions which
@@ -2121,42 +2127,42 @@ func AddFinalizer(env Env, obj Value, native unsafe.Pointer, finalizer *Finalize
 
 // N-API defines work structure which is used asynchronous worker. Insstances are
 // created or deleted with CreateAsyncWork and DeleteAssyncWork. The execute and
-// complete callbacks are functions that will be invoked when the executor is 
+// complete callbacks are functions that will be invoked when the executor is
 // ready to execute and when it completes its task respectively.
 
-// The execute function should avoid making any N-API calls that could result in 
-// the execution of JavaSscript of interaction with JavaScript objects. Most 
+// The execute function should avoid making any N-API calls that could result in
+// the execution of JavaSscript of interaction with JavaScript objects. Most
 // often, any code that needs to make N-API calls should be made in the complete
-// callback instead. Avoid unsing the Env parameter in the execute callback as it 
+// callback instead. Avoid unsing the Env parameter in the execute callback as it
 // will likely execute JavaScript.
 
 // These functions implement the following interfaces:
 // typedef void (*napi_async_execute_callback)(napi_env env, void* data);
 // typedef void (*napi_async_complete_callback)(napi_env env, napi_status status, void* data);
-// When these methods are invoked, the data parameter passed will be the add-on 
+// When these methods are invoked, the data parameter passed will be the add-on
 // provided data that was passed into CreateAsyncWork function.
 
-// Once created the asynchronous worker can be queued for the execution using  
+// Once created the asynchronous worker can be queued for the execution using
 // QueueAsyncWork function. The CancelAyncWork function can be used if the work
 // needs to be cancelled before the work has started its execution. After calling
 // CancelAsyncWork the complete callback will be invoked with a status of
-// Cancelled. The work should not be deleted before the complete callback 
+// Cancelled. The work should not be deleted before the complete callback
 // invocation, even when it was cancelled.
 
 // CreateAsyncWork function allocates a work object that is used to execute logic
 // asynchronously.
 // [in] env: The environment that the API is invoked under.
-// [in] resource: An optional object associated with the async work that will be 
+// [in] resource: An optional object associated with the async work that will be
 // passed to possible async hooks.
-// [in] name: Identifier for the kind of resource that is being provided for 
+// [in] name: Identifier for the kind of resource that is being provided for
 // diagnostic information exposed by the async hooks API.
-// [in] execute: The native function which should be called to execute the logic 
+// [in] execute: The native function which should be called to execute the logic
 // asynchronously. The given function is called from a worker pool thread and can
 // execute in parallel with the main event loop thread.
-// [in] complete: The native function which will be called when the asynchronous 
+// [in] complete: The native function which will be called when the asynchronous
 // logic is completed or is cancelled. The given function is called from the main
 // event loop thread.
-// [in] data: User-provided data context. This will be passed back into the 
+// [in] data: User-provided data context. This will be passed back into the
 // execute and complete functions.
 // [out] result: Returns the handle to the newly created async work.
 // N-API version: 1
@@ -2165,7 +2171,7 @@ func CreateAsyncWork(env Env, resource Value, name Value, execute *AsyncExecuteC
 	cexecute := C.AsyncExecuteCallback(unsafe.Pointer(execute))
 	ccomplete := C.AsyncCompleteCallback(unsafe.Pointer(complete))
 	cdata := unsafe.Pointer(data)
-	var status = C.napi_create_async_work(env,resource, name,cexecute, ccomplete, cdata, &res)
+	var status = C.napi_create_async_work(env, resource, name, cexecute, ccomplete, cdata, &res)
 	return AsyncWork(res), Status(status)
 }
 
@@ -2179,9 +2185,9 @@ func DeleteAsyncWork(env Env, work AsyncWork) Status {
 	return Status(status)
 }
 
-// QueueAsyncWork function requests that the previously allocated work be 
-// scheduled for the execution. 
-// Once it returns successfully, this function must not be called again with the 
+// QueueAsyncWork function requests that the previously allocated work be
+// scheduled for the execution.
+// Once it returns successfully, this function must not be called again with the
 // same AsyncWork item or the result will be undefined.
 // [in] env: The environment that the API is invoked under.
 // [in] work: The handle returned by the call to CreateAsyncWork function.s
@@ -2192,9 +2198,9 @@ func QueueAsyncWork(env Env, work AsyncWork) Status {
 }
 
 // CancelAsyncWork function cancels queued work if it has not yet been started.
-// If it has already started executing, it cannot be cancelled and GenericFailure 
-// will be returned. If successful, the complete callback will be invoked with a 
-// status value of Cancelled. The work should not be deleted before the complete 
+// If it has already started executing, it cannot be cancelled and GenericFailure
+// will be returned. If successful, the complete callback will be invoked with a
+// status value of Cancelled. The work should not be deleted before the complete
 // callback invocation, even if it has been successfully cancelled.
 // This API can be called even if there is a pending JavaScript exception.
 // [in] env: The environment that the API is invoked under.
@@ -2206,15 +2212,15 @@ func CancelAsyncWork(env Env, work AsyncWork) Status {
 }
 
 // Custom Asynchronous Operations
-// The simple asynchronous work may not be appropriate for every scenario. When 
-// using any other asynchronous mechanism, the following APIs are necessary to 
+// The simple asynchronous work may not be appropriate for every scenario. When
+// using any other asynchronous mechanism, the following APIs are necessary to
 // ensure an asynchronous operation is properly tracked by the runtime.
 
 // AsyncInit function initializes a new asynchronous context.
 // [in] env: The environment that the API is invoked under.
-// [in] resource: An optional object associated with the asynchronous work that 
+// [in] resource: An optional object associated with the asynchronous work that
 // will be passed to possible async hooks.
-// [in] name: Identifier for the kind of resource that is being provided for 
+// [in] name: Identifier for the kind of resource that is being provided for
 // diagnostic information exposed by the async hooks.
 // [out] result: The initialized asynchronous context.
 // N-API version: 1
@@ -2224,7 +2230,7 @@ func AsyncInit(env Env, resource Value, name Value) (AsyncContext, Status) {
 	return AsyncContext(res), Status(status)
 }
 
-// AsyncDestroy function destroys the passed asynchronous context. The function 
+// AsyncDestroy function destroys the passed asynchronous context. The function
 // can be called even if there is a pending JavaScript exception.
 // [in] env: The environment that the API is invoked under.
 // [in] ctx: The asynchronous context to be destroyed.
@@ -2236,16 +2242,16 @@ func AsyncDestroy(env Env, ctx AsyncContext) Status {
 
 // MakeCallback function allows a JavaScript function object to be called from
 // a native add-on.
-// This function is similar to CallFunction. However, it is used to call from 
-// native code back into JavaScript after running from async operation. 
+// This function is similar to CallFunction. However, it is used to call from
+// native code back into JavaScript after running from async operation.
 // [in] env: The environment that the API is invoked under.
-// [in] ctx: Context for the async operation that is invoking the callback. This 
-// should normally be a value previously obtained from AsyncInit function. 
-// However nil is also allowed, which indicates the current async context 
+// [in] ctx: Context for the async operation that is invoking the callback. This
+// should normally be a value previously obtained from AsyncInit function.
+// However nil is also allowed, which indicates the current async context
 // (if any) is to be used for the callback.
 // [in] recv: The this object passed to the called function.
 // [in] fn: The JavaScript function to be invoked.
-// [in] args: Slice of JavaScript values as Value representing the arguments to 
+// [in] args: Slice of JavaScript values as Value representing the arguments to
 // the function.
 // [out] result: Value representing the JavaScript object returned.
 // N-API version: 1
@@ -2259,12 +2265,12 @@ func MakeCallback(env Env, ctx AsyncContext, recv Value, fn Value, args []Value)
 
 // OpenCallbackScope function opens the required scope.
 // [in] env: The environment that the API is invoked under.
-// [in] resource: An object associated with the async work that will be passed to 
+// [in] resource: An object associated with the async work that will be passed to
 // possible async hooks .
-// [in] ctx: Context for the async operation that is invoking the callback. This 
+// [in] ctx: Context for the async operation that is invoking the callback. This
 // should be a value previously obtained from Asyncinit.
 // [out] result: The newly created scope.
-// There are cases where it is necessary to have the equivalent of the scope 
+// There are cases where it is necessary to have the equivalent of the scope
 // associated with a callback in place when making certain N-API calls.
 // N-API version: 3
 func OpenCallbackScope(env Env, resource Value, ctx AsyncContext) (CallbackScope, Status) {
@@ -2326,13 +2332,13 @@ func AdjustExternalMemory(env Env, changeInBytes int64) (int64, Status) {
 }
 
 // Promises
-// N-API provides facilities for creating Promise objects as described in 
-// Section 25.4 of the ECMA specification. It implements promises as a pair of 
+// N-API provides facilities for creating Promise objects as described in
+// Section 25.4 of the ECMA specification. It implements promises as a pair of
 // objects.
-// When a promise is created a "deferred" object is created and returned 
+// When a promise is created a "deferred" object is created and returned
 // alongside the Promise. The deferred object is bound to the created Promise and
-// is the only means to resolve or reject the Promise. The deferred object will 
-// be freed when the Promise will be resolde or rejected. The Promise object may 
+// is the only means to resolve or reject the Promise. The deferred object will
+// be freed when the Promise will be resolde or rejected. The Promise object may
 // be returned to JavaScript where it can be used in the usual fashion.
 
 // CreatePromise function creates a deferred object and a JavaScript promise.
@@ -2387,7 +2393,7 @@ func IsPromise(env Env, value Value) (bool, Status) {
 	return bool(res), Status(status)
 }
 
-// RunScript function function execute a JavaScript script passend in like a 
+// RunScript function function execute a JavaScript script passend in like a
 // string.
 // [in] env: The environment that the API is invoked under.
 // [in] script: A JavaScript string containing the script to execute.
@@ -2399,7 +2405,7 @@ func RunScript(env Env, script Value) (Value, Status) {
 	return Value(res), Status(status)
 }
 
-// GetUvEventLoop function retrieves the current event loop associated with a 
+// GetUvEventLoop function retrieves the current event loop associated with a
 // specific environment.
 // [in] env: The environment that the API is invoked under.
 // [out] loop: The current libuv loop instance.
@@ -2411,45 +2417,45 @@ func GetUvEventLoop(env Env) (UVLoop, Status) {
 }
 
 // Asynchronous Thread-safe Function Calls
-// JavaScript functions can normally only be called from a native addon's main 
-// thread. If an addon creates additional threads, then N-API functions that 
+// JavaScript functions can normally only be called from a native addon's main
+// thread. If an addon creates additional threads, then N-API functions that
 // require a Env, Value, or Ref must not be called from those threads.
-// When an addon has additional threads and JavaScript functions need to be 
-// invoked based on the processing completed by those threads, those threads must 
-// communicate with the addon's main thread so that the main thread can invoke 
-// the JavaScript function on their behalf. The thread-safe function APIs provide 
+// When an addon has additional threads and JavaScript functions need to be
+// invoked based on the processing completed by those threads, those threads must
+// communicate with the addon's main thread so that the main thread can invoke
+// the JavaScript function on their behalf. The thread-safe function APIs provide
 // an easy way to do this.
 
 // CreateThreadsafeFunction function ...
 // [in] env: The environment that the API is invoked under.
-// [in] fn: An optional JavaScript function to call from another thread. It must 
+// [in] fn: An optional JavaScript function to call from another thread. It must
 // be provided if nil is passed to call_js_cb.
 // [in] resource: An optional object associated with the async work that will be
 // passed to possible async hooks.
 // [in] maxQueueSize: Maximum size of the queue. 0 for no limit.
-// [in] initialThreadCount: The initial number of threads, including the main 
+// [in] initialThreadCount: The initial number of threads, including the main
 // thread, which will be making use of this function.
 // [in] data: Optional data to be passed to finalize.
-// [in] finalizer: Optional function to call when the thread-safe function is 
+// [in] finalizer: Optional function to call when the thread-safe function is
 // being destroyed.
 // [in] context: Optional data to attach to the resulting thread-safe function.
-// [in] js: Optional callback which calls the JavaScript function in response to 
-// a call on a different thread. This callback will be called on the main thread. 
-// If not given, the JavaScript function will be called with no parameters and 
+// [in] js: Optional callback which calls the JavaScript function in response to
+// a call on a different thread. This callback will be called on the main thread.
+// If not given, the JavaScript function will be called with no parameters and
 // with undefined as its this value.
 // N-API version: 4
 func CreateThreadsafeFunction(env Env, fn Value, resource Value, name Value, maxQueueSize uint, initialThreadCount uint, data unsafe.Pointer, finalizer *FinalizeCaller, ctx unsafe.Pointer, tsfn *ThreadsafeFunctionsCaller) (ThreadsafeFunction, Status) {
 	var res C.napi_threadsafe_function
 	ctsfn := C.ThreadsafeFunctionCallback(unsafe.Pointer(tsfn))
 	cfinalize := C.FinalizeCallback(unsafe.Pointer(finalizer))
-	var status = C.napi_create_threadsafe_function(env ,fn, resource, name, C.size_t(maxQueueSize), C.size_t(initialThreadCount),  data, cfinalize, ctx, ctsfn, &res)
+	var status = C.napi_create_threadsafe_function(env, fn, resource, name, C.size_t(maxQueueSize), C.size_t(initialThreadCount), data, cfinalize, ctx, ctsfn, &res)
 	return ThreadsafeFunction(res), Status(status)
 }
 
 // GetThreadsafeFunctionContext function ...
 // [in] func: The thread-safe function for which to retrieve the context.
 // [out] result: The location where to store the context.
-// This API may be called from any thread which makes use of thread-safe 
+// This API may be called from any thread which makes use of thread-safe
 // function.
 // N-API version: 4
 func GetThreadsafeFunctionContext(fn ThreadsafeFunction) (unsafe.Pointer, Status) {
@@ -2460,11 +2466,11 @@ func GetThreadsafeFunctionContext(fn ThreadsafeFunction) (unsafe.Pointer, Status
 
 // CallThreadsafeFunction function ...
 // [in] fn: The asynchronous thread-safe JavaScript function to invoke.
-// [in] data: Data to send into JavaScript via the callback provided during the 
+// [in] data: Data to send into JavaScript via the callback provided during the
 // creation of the thread-safe JavaScript function.
-// [in] isBlocking: Flag whose value can be either NapiTsfnBlocking to indicate 
-// that the call should block if the queue is full or NapiTsfnNonBlocking to 
-// indicate that the call should return immediately with a status of 
+// [in] isBlocking: Flag whose value can be either NapiTsfnBlocking to indicate
+// that the call should block if the queue is full or NapiTsfnNonBlocking to
+// indicate that the call should return immediately with a status of
 // QueueFull whenever the queue is full.
 // This function may be called from any thread which makes use of the thread-safe
 // function.
@@ -2474,8 +2480,8 @@ func CallThreadsafeFunction(fn ThreadsafeFunction, data unsafe.Pointer, mode Thr
 	return Status(status)
 }
 
-// AcquireThreadsafeFunction function should be called before use thread-safe 
-// function. This prevents the thread-safe function to be destroyed when all 
+// AcquireThreadsafeFunction function should be called before use thread-safe
+// function. This prevents the thread-safe function to be destroyed when all
 // other threads have stopped making use of it. This function maybe called from
 // any thread which will start making use of thread-safe function.
 // N-API version: 4
@@ -2485,15 +2491,15 @@ func AcquireThreadsafeFunction(fn ThreadsafeFunction) Status {
 }
 
 // ReleaseThreadsafeFunction function should be called when a thread stops making
-// use of thread-safe function. Passing the thread-safe function to any 
+// use of thread-safe function. Passing the thread-safe function to any
 // thread-safe APIs could result in an undefined behaviour. This function may be
 // called from any thread which will stop making use of thread-safe function.
-// [in] fn: The asynchronous thread-safe JavaScript function whose reference 
+// [in] fn: The asynchronous thread-safe JavaScript function whose reference
 // count to decrement.
 // [in] mode: Flag whose value can be:
-//  - napi_tsfn_release: the current thread will make no further calls to 
+//  - napi_tsfn_release: the current thread will make no further calls to
 //  thread-safe function.
-//  - napi_tsfn_abort: the current thread, no other htread should make any 
+//  - napi_tsfn_abort: the current thread, no other htread should make any
 //  further calls to thread-safe function.
 // If set to napi_tsfn_abort, further calls to napi_call_threadsafe_function()
 // will return napi_closing and no further values will be placed in the queue.
@@ -2504,7 +2510,7 @@ func ReleaseThreadsafeFunction(fn ThreadsafeFunction, mode TheradsafeFunctionRel
 }
 
 // RefThreadsafeFunction function is used to indicate that the event loop running
-// on the main thread should not exit until the threadsafe function has been 
+// on the main thread should not exit until the threadsafe function has been
 // destroyed. This function may only be called from the main thread.
 // [in] env: The environment that the API is invoked under.
 // [in] fn: The thread-safe function to reference.
@@ -2515,7 +2521,7 @@ func RefThreadsafeFunction(env Env, fn ThreadsafeFunction) Status {
 }
 
 // UnrefThreadsafeFunction function is used to indicate that the event loop
-// running on the main thread may exit before the threadsafe function is 
+// running on the main thread may exit before the threadsafe function is
 // destroyed. This function may only be called from the main thread.
 // [in] env: The environment that the API is invoked under.
 // [in] fn: The thread-safe function to unreference.
@@ -2550,7 +2556,7 @@ type AsyncExecuteCaller struct {
 //export CallAsyncExecuteCallback
 func CallAsyncExecuteCallback(wrap unsafe.Pointer, env C.napi_env, data unsafe.Pointer) {
 	caller := (*AsyncExecuteCaller)(wrap)
-	caller.Cb(env, data)	
+	caller.Cb(env, data)
 }
 
 // CAsyncExecuteCallback  ...
@@ -2564,7 +2570,7 @@ type AsyncCompleteCaller struct {
 //export CallAsyncCompleteCallback
 func CallAsyncCompleteCallback(wrap unsafe.Pointer, env C.napi_env, status C.napi_status, data unsafe.Pointer) {
 	caller := (*AsyncCompleteCaller)(wrap)
-	caller.Cb(env, status, data)	
+	caller.Cb(env, status, data)
 }
 
 // CFinalizeCallback  ...
@@ -2578,7 +2584,7 @@ type FinalizeCaller struct {
 //export CallFinalizeCallback
 func CallFinalizeCallback(wrap unsafe.Pointer, env C.napi_env, data unsafe.Pointer, hint unsafe.Pointer) {
 	caller := (*FinalizeCaller)(wrap)
-	caller.Cb(env, data, hint)	
+	caller.Cb(env, data, hint)
 }
 
 // CThreadsafeFunctionsCallback  ...
@@ -2590,9 +2596,9 @@ type ThreadsafeFunctionsCaller struct {
 }
 
 //export CallThreadsafeFunctionCallback
-func CallThreadsafeFunctionCallback(wrap unsafe.Pointer, env C.napi_env, fn C.napi_value , ctx unsafe.Pointer, data unsafe.Pointer) {
+func CallThreadsafeFunctionCallback(wrap unsafe.Pointer, env C.napi_env, fn C.napi_value, ctx unsafe.Pointer, data unsafe.Pointer) {
 	caller := (*ThreadsafeFunctionsCaller)(wrap)
-	caller.Cb(env, fn, ctx, data)	
+	caller.Cb(env, fn, ctx, data)
 }
 
 // Property ...

@@ -8,10 +8,9 @@ import (
 
 func add(env napisys.Env, info napisys.CallbackInfo) napisys.Value {
 	params, _, _, _ := napisys.GetCbInfo(env, info)
-	//v1, _ := napisys.GetValueInt32(env, params[0])
-	//v2, _ := napisys.GetValueInt32(env, params[1])
-	value, _ := napisys.CreateInt32(env, int32(len(params)) )
-
+	v1, _ := napisys.GetValueInt32(env, params[0])
+	v2, _ := napisys.GetValueInt32(env, params[1])
+	value, _ := napisys.CreateInt32(env, int32(v1 + v2) )
 	return value
 }
 
