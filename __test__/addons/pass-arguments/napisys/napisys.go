@@ -1890,11 +1890,14 @@ func CallFunction(env Env, receiver Value, function Value, arguments []Value) (V
 // [in] data: User-provided data context. This will be passed back into the
 // function when invoked later.
 // N-API version: 1
-func CreateFunction(env Env, name string, cb Callback) (Value, Status) {
+func CreateFunction(env Env, name string, cb CCallback) (Value, Status) {
+	caller := &Caller{
+		Cb: cb,
+	}
 	var res C.napi_value
 	var cname = C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	var status = C.napi_create_function(env, cname, C.NAPI_AUTO_LENGTH, cb, nil, &res)
+	var status = C.napi_create_function(env, cname, C.NAPI_AUTO_LENGTH, (Callback)(C.Callback(unsafe.Pointer(caller))), nil, &res)
 	return Value(res), Status(status)
 }
 
