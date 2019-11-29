@@ -5,7 +5,7 @@ const addon = require('bindings')('addon');
 let iterations = 23
 
 const unix = () => { 
-    const t = addon.unix()
+    const t = addon.unixNano()
     console.log(`Unix timestamp in nanoseconds => ${t}`)
     iterations -= 1
     if (iterations == 0) {

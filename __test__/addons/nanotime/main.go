@@ -2,12 +2,12 @@ package main
 
 import (
 	"C"
-	"go-napi-sys/__test__/addons/microtime/napisys"
+	"go-napi-sys/__test__/addons/nanotime/napisys"
 	"unsafe"
 	"time"
 )
 
-func unix(env napisys.Env, info napisys.CallbackInfo) napisys.Value {
+func unixNano(env napisys.Env, info napisys.CallbackInfo) napisys.Value {
 	now := time.Now()
 	value, _ := napisys.CreateInt64(env, now.UnixNano())
 	return value
@@ -16,10 +16,10 @@ func unix(env napisys.Env, info napisys.CallbackInfo) napisys.Value {
 //export Initialize
 func Initialize(env unsafe.Pointer, exports unsafe.Pointer) unsafe.Pointer {
 	caller := &napisys.Caller{
-		Cb: unix,
+		Cb: unixNano,
 	}
 	desc := napisys.Property{
-		Name:   "unix",
+		Name:   "unixNano",
 		Method: caller,
 	}
 	props := []napisys.Property{desc}
