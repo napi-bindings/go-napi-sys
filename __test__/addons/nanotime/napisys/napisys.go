@@ -4,7 +4,9 @@ package napisys
 #cgo CXXFLAGS: -std=c++11
 #cgo CXXFLAGS:  -I./include/
 #cgo CFLAGS: -I./include/ -DNAPI_EXPERIMENTAL=1
-#cgo LDFLAGS: -L./lib/ -lnode_api
+#cgo linux LDFLAGS: -Wl,-unresolved-symbols=ignore-all
+#cgo windows LDFLAGS: -Wl,-unresolved-symbols=ignore-all
+#cgo darwin LDFLAGS: -Wl,-undefined,dynamic_lookup
 #include <stdlib.h>
 #include "gonapi.h"
 #include <node_api.h>

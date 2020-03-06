@@ -10,7 +10,7 @@ rm -rf *.*
 cd .. && \
 echo Adding libraries ... && \
 mkdir lib && \
-cp ../../../napi-stub/libnode_api.a lib/libnode_api.a && \
+#cp ../../../napi-stub/libnode_api.a lib/libnode_api.a && \
 echo Adding includes ... && \
 cp ../../../napi-stub/js_native_api_types.h include/js_native_api_types.h && \
 cp ../../../napi-stub/js_native_api.h include/js_native_api.h && \
