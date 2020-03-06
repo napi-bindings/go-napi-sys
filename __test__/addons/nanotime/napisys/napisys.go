@@ -5,7 +5,7 @@ package napisys
 #cgo CXXFLAGS:  -I./include/
 #cgo CFLAGS: -I./include/ -DNAPI_EXPERIMENTAL=1
 #cgo linux LDFLAGS: -Wl,-unresolved-symbols=ignore-all
-#cgo windows LDFLAGS: -Wl,-unresolved-symbols=ignore-all
+#cgo windows LDFLAGS:  /FORCE:UNRESOLVED
 #cgo darwin LDFLAGS: -Wl,-undefined,dynamic_lookup
 #include <stdlib.h>
 #include "gonapi.h"
