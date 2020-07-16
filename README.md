@@ -6,6 +6,8 @@ If you want to know more about all the work behind this module please take a loo
 followings repo: 
 - **[Research for N-API](https://github.com/napi-bindings/abi-stable-node-research)**
 
+This is the first **draft** implementation of a low level binding with N-API written in Go.
+
 ### Do not install and use it. I published the module to reserve the name, but for now it does not work.
 
 ## This module is under development yet :-) 
